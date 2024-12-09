@@ -27,6 +27,8 @@ public class Player extends Entity {
     private boolean isMoving = false;
     private boolean wasMoving = false; // To track previous state
 
+    public String character = "slime1";
+
     GamePanel gp;
     KeyHandler keyH;
 
@@ -48,8 +50,23 @@ public class Player extends Entity {
 
     private void loadSpriteSheets() {
         try {
-            spriteSheet = ImageIO.read(new File("images/Slime1_Run_full.png"));
-            idleSpriteSheet = ImageIO.read(new File("images/Slime1_Idle_full.png"));
+            switch (character) {
+                case "slime1":
+                    spriteSheet = ImageIO.read(new File("images/Slime character/PNG/Slime 1/Slime1_Run_full.png"));
+                    idleSpriteSheet = ImageIO.read(new File("images/Slime character/PNG/Slime 1/Slime1_Idle_full.png"));
+                    break;
+                case "slime2":
+                    spriteSheet = ImageIO.read(new File("images/Slime character/PNG/Slime 2/Slime2_Run_full.png"));
+                    idleSpriteSheet = ImageIO.read(new File("images/Slime character/PNG/Slime 2/Slime2_Idle_full.png"));
+                    break;
+                case "slime3":
+                    spriteSheet = ImageIO.read(new File("images/Slime character/PNG/Slime 3/Slime3_Run_full.png"));
+                    idleSpriteSheet = ImageIO.read(new File("images/Slime character/PNG/Slime 3/Slime3_Idle_full.png"));
+                    break;
+                default:
+                    break;
+            }
+            
         } catch (IOException e) {
             e.printStackTrace();
         }
