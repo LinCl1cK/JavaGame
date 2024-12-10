@@ -30,7 +30,7 @@ public class Player extends Entity {
     GamePanel gp;
     KeyHandler keyH;
 
-    public String character = "slime3";
+    public String character = "slime1";
     
     //public final int screenX = gp.screenWidth/2;
     //public final int screenY = gp.screenHeight/2;

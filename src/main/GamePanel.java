@@ -1,9 +1,11 @@
 package main;
 
+import entity.Player;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import javax.security.auth.kerberos.DelegationPermission;
 import javax.swing.JPanel;
 import main.entity.Player;
 import main.tile.TileManager;
@@ -25,8 +27,6 @@ public class GamePanel extends JPanel implements Runnable {
 
    TileManager tileM = new TileManager(this);
 
-    // Refresh rate
-    int FPS = 60;
 
     // Instances
     KeyHandler keyH = new KeyHandler();
@@ -107,7 +107,7 @@ public class GamePanel extends JPanel implements Runnable {
             lastTime = currentTime;
 
             if(delta >= 1) {
-                update();
+                update(delta);
                 repaint();
                 delta--;
                 drawCount++;
@@ -119,16 +119,10 @@ public class GamePanel extends JPanel implements Runnable {
 
     }
 
-    public void update() {
-
-        player.update();
-
-    
-
-        
+    public void update(double delta) {
+        player.update(delta);
 
     }
-
     //for drawing the UI
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
