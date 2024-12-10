@@ -11,11 +11,11 @@ public class Main {
         window.setResizable(false);
         window.setTitle("Nigeru Suraimu");
 
+        
         GamePanel gamePanel = new GamePanel();
         window.add(gamePanel);
 
         window.pack();
-
         window.setLocationRelativeTo(null);
         window.setVisible(true);
         

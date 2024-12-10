@@ -10,7 +10,7 @@ import main.tile.TileManager;
 
 public class GamePanel extends JPanel implements Runnable {
 
-    //Screen Settings
+    // Screen Settings
     final int originalTileSize = 16; // 16 x 16 Tile
     final int scale = 3;
 
@@ -25,7 +25,10 @@ public class GamePanel extends JPanel implements Runnable {
 
    TileManager tileM = new TileManager(this);
 
-    //Instances
+    // Refresh rate
+    int FPS = 60;
+
+    // Instances
     KeyHandler keyH = new KeyHandler();
     Thread gameThread; // when game thread is called, it automatically runs the 'run' method
     Player player  = new Player(this, keyH);
@@ -37,22 +40,17 @@ public class GamePanel extends JPanel implements Runnable {
 
 
     public GamePanel() {
-
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
         this.setBackground(Color.BLACK);
         this.setDoubleBuffered(true);
         this.addKeyListener(keyH);
         this.setFocusable(true);
-
     }
 
     public void startGameThread() {
-
         gameThread = new Thread(this);
         gameThread.start();
-
     }
-
 
     @Override
     /*public void run() {
@@ -133,7 +131,6 @@ public class GamePanel extends JPanel implements Runnable {
 
     //for drawing the UI
     public void paintComponent(Graphics g) {
-
         super.paintComponent(g);
 
         Graphics2D g2 = (Graphics2D)g;
@@ -145,5 +142,4 @@ public class GamePanel extends JPanel implements Runnable {
         g2.dispose();
 
     }
-
 }
