@@ -1,0 +1,8 @@
+{
+    "java.project.sourcePaths": [
+        "resources",
+        "resources\\tiles",
+        "src"
+    ],
+    "java.project.referencedLibraries": []
+}
