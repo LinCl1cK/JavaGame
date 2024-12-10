@@ -27,10 +27,13 @@ public class Player extends Entity {
     private boolean isMoving = false;
     private boolean wasMoving = false; // To track previous state
 
-    public String character = "slime1";
-
     GamePanel gp;
     KeyHandler keyH;
+
+    public String character = "slime3";
+    
+    //public final int screenX = gp.screenWidth/2;
+    //public final int screenY = gp.screenHeight/2;
 
     public Player(GamePanel gp, KeyHandler keyH) {
         this.gp = gp;
@@ -43,8 +46,8 @@ public class Player extends Entity {
     }
 
     public void setDefaultValues() {
-        x = 100;
-        y = 100;
+        worldX = 100;
+        worldY = 100;
         speed = 4;
     }
 
@@ -107,19 +110,19 @@ public class Player extends Entity {
 
         if (keyH.upPressed) {
             currentDirection = Direction.UP;
-            y -= speed;
+            worldY -= speed;
             isMoving = true;
         } else if (keyH.downPressed) {
             currentDirection = Direction.DOWN;
-            y += speed;
+            worldY += speed;
             isMoving = true;
         } else if (keyH.leftPressed) {
             currentDirection = Direction.LEFT;
-            x -= speed;
+            worldX -= speed;
             isMoving = true;
         } else if (keyH.rightPressed) {
             currentDirection = Direction.RIGHT;
-            x += speed;
+            worldX += speed;
             isMoving = true;
         }
 
@@ -180,6 +183,6 @@ public class Player extends Entity {
             }
         }
 
-        g2.drawImage(currentFrame, x, y, SPRITE_WIDTH * SCALE, SPRITE_HEIGHT * SCALE, null);
+        g2.drawImage(currentFrame, worldX, worldY, SPRITE_WIDTH * SCALE, SPRITE_HEIGHT * SCALE, null);
     }
 }
