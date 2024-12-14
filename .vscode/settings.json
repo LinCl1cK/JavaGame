@@ -1,0 +1,17 @@
+{
+    "java.project.referencedLibraries": {
+        "include": [
+            "lib/**/*.jar",
+            "c:\\Users\\Lorenz\\tiled\\util\\java\\libtiled-java\\target\\libtiled-1.4.2-SNAPSHOT.jar",
+            "c:\\Users\\Lorenz\\Documents\\WebDev\\jaxb-api-2.3.1.jar",
+            "c:\\Users\\Lorenz\\Documents\\GameDev\\jaxb-api-2.3.1.jar",
+            "c:\\Users\\Lorenz\\Documents\\GameDev\\jaxb-core-2.3.0.1.jar",
+            "c:\\Users\\Lorenz\\Documents\\GameDev\\jaxb-impl-2.3.0.1.jar",
+            "c:\\Users\\Lorenz\\Documents\\GameDev\\jaxb-runtime-2.3.1.jar",
+            "c:\\Users\\Lorenz\\Documents\\GameDev\\activation-1.1.1.jar"
+        ],
+        "exclude": [
+            "lib/activation-1.1.1.jar"
+        ]
+    }
+}
