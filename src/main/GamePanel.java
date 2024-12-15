@@ -21,8 +21,8 @@ public class GamePanel extends JPanel implements Runnable {
     public final int screenHeight = tileSize * maxScreenRow; // 576 px
 
     // World Settings
-    public final int maxWorldCol = 32;
-    public final int maxWorldRow = 32;
+    public final int maxWorldCol = 66;
+    public final int maxWorldRow = 60;
     public final int worldWidth = tileSize * maxScreenCol;
     public final int worldHeight = tileSize * maxScreenRow;
 
@@ -132,12 +132,12 @@ public class GamePanel extends JPanel implements Runnable {
         // Draw base tile layer
         tileManager.drawBaseLayer(g2, player.worldX, player.worldY);
         
-        tileManager.drawPlayerLayer(g2, player.worldX, player.worldY);
+        tileManager.drawPlayerTileLayer(g2, player.worldX, player.worldY);
 
         // Draw player
         player.draw(g2);
         
         // Draw additional tile layer
-        tileManager.drawAdditionalLayer(g2, player.worldX, player.worldY);
+        tileManager.drawSecondaryLayer(g2, player.worldX, player.worldY);
     }
 }

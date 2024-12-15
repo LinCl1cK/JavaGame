@@ -14,10 +14,12 @@ public class TileManager {
 
     GamePanel gp;
     private int[][] baseTileLayer;
-    private int[][] playerLayer;
-    private int[][] additionalTileLayer;
+    private int[][] playerTileLayer;
+    private int[][] secondaryTileLayer;
     private BufferedImage baseTilesetImage;
     //private BufferedImage additionalTilesetImage;
+
+    private String map = "dungeon";
 
     public TileManager(GamePanel gp) {
         this.gp = gp;
@@ -25,14 +27,25 @@ public class TileManager {
 
     public void loadMap() {
         try {
-            // Load base tileset and tile layer
-            baseTilesetImage = ImageIO.read(new File("images/map/atlas.png"));
-            baseTileLayer = loadCSV("images/map/SampleMap_Tile Layer 1.csv");
+            if (map == "dungeon") {
+                baseTilesetImage = ImageIO.read(new File("images/map/dungeon/Dungeon_Tileset.png"));
+                baseTileLayer = loadCSV("images/map/dungeon/DungeonMap01_Tile Layer 1.csv");
+                playerTileLayer = loadCSV("images/map/dungeon/DungeonMap01_Tile Layer 2.csv");
+                secondaryTileLayer = loadCSV("images/map/dungeon/DungeonMap01_Rooms.csv");
+                
+            } else if (map == "forest") {
+                
+            }else {
+                // Load base tileset and tile layer
+                baseTilesetImage = ImageIO.read(new File("images/map/atlas.png"));
+                baseTileLayer = loadCSV("images/map/SampleMap_Tile Layer 1.csv");
 
-            // Load additional tileset and tile layer
-            //additionalTilesetImage = ImageIO.read(new File("images/map/SampleLayer.png"));
-            playerLayer = loadCSV("images/map/SampleMap_Tile Layer 2.csv");
-            additionalTileLayer = loadCSV("images/map/SampleMap_Tile Layer 3.csv");
+                // Load additional tileset and tile layer
+                //additionalTilesetImage = ImageIO.read(new File("images/map/SampleLayer.png"));
+                playerTileLayer = loadCSV("images/map/SampleMap_Tile Layer 2.csv");
+                secondaryTileLayer = loadCSV("images/map/SampleMap_Tile Layer 3.csv");
+            }
+            
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -41,8 +54,14 @@ public class TileManager {
     private int[][] loadCSV(String filePath) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(filePath));
         String line;
-        int[][] layer = new int[32][32]; // Adjust size based on your map dimensions
+        int[][] layer;
         int row = 0;
+        
+        if (map == "dungeon" || map == "forest") {
+            layer = new int[60][66];
+        } else {
+            layer = new int[32][32]; // Adjust size based on your map dimensions
+        }
 
         while ((line = br.readLine()) != null) {
             String[] values = line.split(",");
@@ -59,12 +78,12 @@ public class TileManager {
         drawLayer(g2, baseTilesetImage, baseTileLayer, playerWorldX, playerWorldY);
     }
 
-    public void drawPlayerLayer(Graphics2D g2, int playerWorldX, int playerWorldY) {
-        drawLayer(g2, baseTilesetImage, playerLayer, playerWorldX, playerWorldY);
+    public void drawPlayerTileLayer(Graphics2D g2, int playerWorldX, int playerWorldY) {
+        drawLayer(g2, baseTilesetImage, playerTileLayer, playerWorldX, playerWorldY);
     }
 
-    public void drawAdditionalLayer(Graphics2D g2, int playerWorldX, int playerWorldY) {
-        drawLayer(g2, baseTilesetImage, additionalTileLayer, playerWorldX, playerWorldY);
+    public void drawSecondaryLayer(Graphics2D g2, int playerWorldX, int playerWorldY) {
+        drawLayer(g2, baseTilesetImage, secondaryTileLayer, playerWorldX, playerWorldY);
     }
 
     private void drawLayer(Graphics g, BufferedImage tilesetImage, int[][] tileLayer, int playerWorldX, int playerWorldY) {
