@@ -29,6 +29,9 @@ public class GamePanel extends JPanel implements Runnable {
     // Refresh rate
     int FPS = 60;
 
+   TileManager tileM = new TileManager(this);
+
+
     // Instances
     KeyHandler keyH = new KeyHandler();
     Thread gameThread; // when game thread is called, it automatically runs the 'run' method
@@ -52,6 +55,44 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     @Override
+    /*public void run() {
+
+
+        double drawInterval = 1000000000/FPS;
+        double nextDrawTime = System.nanoTime() + drawInterval;
+
+        //game loop
+        while( gameThread != null) {
+
+            
+
+            update();
+
+            repaint();
+
+
+            try {
+            double remainingTime = nextDrawTime - System.nanoTime();
+            remainingTime = remainingTime/1000000;
+
+            if(remainingTime < 0) {
+                remainingTime = 0;
+            }
+
+            
+            Thread.sleep((long)remainingTime);
+
+            nextDrawTime += drawInterval;
+
+            }catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+
+        }
+
+    }    */
+        
     public void run() {
         double drawInterval = 1000000000 / FPS;
         double delta = 0;
@@ -90,12 +131,12 @@ public class GamePanel extends JPanel implements Runnable {
 
         // Draw base tile layer
         tileManager.drawBaseLayer(g2, player.worldX, player.worldY);
-
+        
         tileManager.drawPlayerLayer(g2, player.worldX, player.worldY);
 
         // Draw player
         player.draw(g2);
-
+        
         // Draw additional tile layer
         tileManager.drawAdditionalLayer(g2, player.worldX, player.worldY);
     }

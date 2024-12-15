@@ -88,4 +88,9 @@ public class TileManager {
             }
         }
     }
+
+    public void draw(Graphics2D g2) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'draw'");
+    }
 }
