@@ -1,0 +1,91 @@
+package tile;
+
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import javax.imageio.ImageIO;
+import main.GamePanel;
+
+public class TileManager {
+
+    GamePanel gp;
+    private int[][] baseTileLayer;
+    private int[][] playerLayer;
+    private int[][] additionalTileLayer;
+    private BufferedImage baseTilesetImage;
+    //private BufferedImage additionalTilesetImage;
+
+    public TileManager(GamePanel gp) {
+        this.gp = gp;
+    }
+
+    public void loadMap() {
+        try {
+            // Load base tileset and tile layer
+            baseTilesetImage = ImageIO.read(new File("images/map/atlas.png"));
+            baseTileLayer = loadCSV("images/map/SampleMap_Tile Layer 1.csv");
+
+            // Load additional tileset and tile layer
+            //additionalTilesetImage = ImageIO.read(new File("images/map/SampleLayer.png"));
+            playerLayer = loadCSV("images/map/SampleMap_Tile Layer 2.csv");
+            additionalTileLayer = loadCSV("images/map/SampleMap_Tile Layer 3.csv");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private int[][] loadCSV(String filePath) throws IOException {
+        BufferedReader br = new BufferedReader(new FileReader(filePath));
+        String line;
+        int[][] layer = new int[32][32]; // Adjust size based on your map dimensions
+        int row = 0;
+
+        while ((line = br.readLine()) != null) {
+            String[] values = line.split(",");
+            for (int col = 0; col < values.length; col++) {
+                layer[row][col] = Integer.parseInt(values[col]);
+            }
+            row++;
+        }
+        br.close();
+        return layer;
+    }
+
+    public void drawBaseLayer(Graphics2D g2, int playerWorldX, int playerWorldY) {
+        drawLayer(g2, baseTilesetImage, baseTileLayer, playerWorldX, playerWorldY);
+    }
+
+    public void drawPlayerLayer(Graphics2D g2, int playerWorldX, int playerWorldY) {
+        drawLayer(g2, baseTilesetImage, playerLayer, playerWorldX, playerWorldY);
+    }
+
+    public void drawAdditionalLayer(Graphics2D g2, int playerWorldX, int playerWorldY) {
+        drawLayer(g2, baseTilesetImage, additionalTileLayer, playerWorldX, playerWorldY);
+    }
+
+    private void drawLayer(Graphics g, BufferedImage tilesetImage, int[][] tileLayer, int playerWorldX, int playerWorldY) {
+        if (tilesetImage != null && tileLayer != null) {
+            for (int row = 0; row < tileLayer.length; row++) {
+                for (int col = 0; col < tileLayer[row].length; col++) {
+                    int tileIndex = tileLayer[row][col];
+                    int tilesetX = (tileIndex % (tilesetImage.getWidth() / gp.originalTileSize)) * gp.originalTileSize;
+                    int tilesetY = (tileIndex / (tilesetImage.getWidth() / gp.originalTileSize)) * gp.originalTileSize;
+
+                    int screenX = col * gp.tileSize - playerWorldX + gp.screenWidth / 2;
+                    int screenY = row * gp.tileSize - playerWorldY + gp.screenHeight / 2;
+
+                    // Only draw tiles within the visible screen area
+                    if (screenX + gp.tileSize > 0 && screenX < gp.screenWidth &&
+                        screenY + gp.tileSize > 0 && screenY < gp.screenHeight) {
+                        g.drawImage(tilesetImage, screenX, screenY, screenX + gp.tileSize, screenY + gp.tileSize,
+                                    tilesetX, tilesetY, tilesetX + gp.originalTileSize, tilesetY + gp.originalTileSize, gp);
+                    }
+                }
+            }
+        }
+    }
+}

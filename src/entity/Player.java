@@ -31,7 +31,10 @@ public class Player extends Entity {
     KeyHandler keyH;
 
     public String character = "slime3";
-    
+
+    // World positions for the player
+    public int worldX, worldY;
+
     // Screen positions for the player
     public final int screenX;
     public final int screenY;
@@ -51,9 +54,9 @@ public class Player extends Entity {
     }
 
     public void setDefaultValues() {
-        worldX = 100;
-        worldY = 100;
-        speed = 4 * SCALE; // Adjust speed according to scale speed = 4 * SCALE;
+        worldX = gp.tileSize * 16;
+        worldY = gp.tileSize * 16;
+        speed = 4; // Adjust speed according to scale
     }
 
     private void loadSpriteSheets() {
@@ -74,7 +77,7 @@ public class Player extends Entity {
                 default:
                     break;
             }
-            
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -187,8 +190,7 @@ public class Player extends Entity {
                     break;
             }
         }
-    
-        g2.drawImage(currentFrame, worldX, worldY, SPRITE_WIDTH * SCALE, SPRITE_HEIGHT * SCALE, null);
+
+        g2.drawImage(currentFrame, screenX, screenY, SPRITE_WIDTH * SCALE, SPRITE_HEIGHT * SCALE, null);
     }
-    
 }

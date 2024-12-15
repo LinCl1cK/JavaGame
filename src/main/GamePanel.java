@@ -4,19 +4,14 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import entity.Player;
+import tile.TileManager;
 
 public class GamePanel extends JPanel implements Runnable {
 
     // Screen Settings
-    final int originalTileSize = 16; // 16 x 16 Tile
+    public final int originalTileSize = 16; // 16 x 16 Tile
     final int scale = 3;
 
     public final int tileSize = originalTileSize * scale; // 48 x 48 Tile
@@ -25,10 +20,11 @@ public class GamePanel extends JPanel implements Runnable {
     public final int screenWidth = tileSize * maxScreenCol; // 768 px
     public final int screenHeight = tileSize * maxScreenRow; // 576 px
 
-    private int[][] baseTileLayer;
-    private int[][] additionalTileLayer;
-    private BufferedImage baseTilesetImage;
-    private BufferedImage additionalTilesetImage;
+    // World Settings
+    public final int maxWorldCol = 32;
+    public final int maxWorldRow = 32;
+    public final int worldWidth = tileSize * maxScreenCol;
+    public final int worldHeight = tileSize * maxScreenRow;
 
     // Refresh rate
     int FPS = 60;
@@ -36,7 +32,8 @@ public class GamePanel extends JPanel implements Runnable {
     // Instances
     KeyHandler keyH = new KeyHandler();
     Thread gameThread; // when game thread is called, it automatically runs the 'run' method
-    Player player = new Player(this, keyH);
+    public Player player = new Player(this, keyH);
+    TileManager tileManager = new TileManager(this);
 
     public GamePanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -46,38 +43,7 @@ public class GamePanel extends JPanel implements Runnable {
         this.setFocusable(true);
 
         // Load map layers and tilesets
-        loadMap();
-    }
-
-    private void loadMap() {
-        try {
-            // Load base tileset and tile layer
-            baseTilesetImage = ImageIO.read(new File("images/map/SampleBase.png"));
-            baseTileLayer = loadCSV("images/map/SampleMap_Tile Layer 1.csv");
-
-            // Load additional tileset and tile layer
-            additionalTilesetImage = ImageIO.read(new File("images/map/SampleLayer.png"));
-            additionalTileLayer = loadCSV("images/map/SampleMap_Tile Layer 2.csv");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private int[][] loadCSV(String filePath) throws IOException {
-        BufferedReader br = new BufferedReader(new FileReader(filePath));
-        String line;
-        int[][] layer = new int[30][30]; // Adjust size based on your map dimensions
-        int row = 0;
-
-        while ((line = br.readLine()) != null) {
-            String[] values = line.split(",");
-            for (int col = 0; col < values.length; col++) {
-                layer[row][col] = Integer.parseInt(values[col]);
-            }
-            row++;
-        }
-        br.close();
-        return layer;
+        tileManager.loadMap();
     }
 
     public void startGameThread() {
@@ -111,7 +77,7 @@ public class GamePanel extends JPanel implements Runnable {
                 timer = 0;
             }
         }
-    } 
+    }
 
     public void update(double delta) {
         player.update(delta);
@@ -123,27 +89,14 @@ public class GamePanel extends JPanel implements Runnable {
         Graphics2D g2 = (Graphics2D) g; // Upgrade version of drawing
 
         // Draw base tile layer
-        drawLayer(g2, baseTilesetImage, baseTileLayer);
+        tileManager.drawBaseLayer(g2, player.worldX, player.worldY);
 
-        // Draw additional tile layer
-        drawLayer(g2, additionalTilesetImage, additionalTileLayer);
+        tileManager.drawPlayerLayer(g2, player.worldX, player.worldY);
 
         // Draw player
         player.draw(g2);
-    }
 
-    private void drawLayer(Graphics g, BufferedImage tilesetImage, int[][] tileLayer) {
-        if (tilesetImage != null && tileLayer != null) {
-            for (int row = 0; row < tileLayer.length; row++) {
-                for (int col = 0; col < tileLayer[row].length; col++) {
-                    int tileIndex = tileLayer[row][col];
-                    int tilesetX = (tileIndex % (tilesetImage.getWidth() / originalTileSize)) * originalTileSize;
-                    int tilesetY = (tileIndex / (tilesetImage.getWidth() / originalTileSize)) * originalTileSize;
-                    g.drawImage(tilesetImage, col * tileSize, row * tileSize, col * tileSize + tileSize,
-                                row * tileSize + tileSize, tilesetX, tilesetY, 
-                                tilesetX + originalTileSize, tilesetY + originalTileSize, this);
-                }
-            }
-        }
+        // Draw additional tile layer
+        tileManager.drawAdditionalLayer(g2, player.worldX, player.worldY);
     }
 }
