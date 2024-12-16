@@ -13,18 +13,14 @@ public class SoundHandler {
         public static void RunMusic(String path) throws LineUnavailableException{
                 try {
                         AudioInputStream inputStream = AudioSystem.getAudioInputStream(new File (path));
-                         Clip clip = AudioSystem.getClip();
-                         clip.open(inputStream);
-                         clip.loop(0);
-                         clip.start();
+                        Clip clip = AudioSystem.getClip();
+                        clip.open(inputStream);
+                        clip.loop(0);
+                        clip.start();
                 } catch (UnsupportedAudioFileException e) {
                         e.printStackTrace();
                 } catch (IOException e) {
                         e.printStackTrace();
                 }
-
-
-            
         }
-
 }
