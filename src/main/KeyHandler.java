@@ -27,15 +27,19 @@ public class KeyHandler implements KeyListener {
         if(code == KeyEvent.VK_D) {
             rightPressed = true;
         }
-        if(code == KeyEvent.VK_ENTER) {
-            enterPressed = true; 
+        if(code == KeyEvent.VK_UP) {
+            upPressed = true;
         }
-        if(code == KeyEvent.VK_SPACE) {
-            spacePressed = true; 
+        if(code == KeyEvent.VK_DOWN) {
+            downPressed = true;
         }
-        if(code == KeyEvent.VK_SHIFT) {
-            shiftPressed = true; 
+        if(code == KeyEvent.VK_LEFT) {
+            leftPressed = true;
         }
+        if(code == KeyEvent.VK_RIGHT) {
+            rightPressed = true;
+        }
+       
     }
 
     @Override
@@ -54,14 +58,29 @@ public class KeyHandler implements KeyListener {
         if(code == KeyEvent.VK_D) {
             rightPressed = false;
         }
-        if(code == KeyEvent.VK_ENTER) {
-            enterPressed = false; 
+        if(code == KeyEvent.VK_UP) {
+            upPressed = false; 
         }
-        if(code == KeyEvent.VK_SPACE) {
-            spacePressed = false; 
+        if(code == KeyEvent.VK_DOWN) {
+            downPressed = false; 
         }
-        if(code == KeyEvent.VK_SHIFT) {
-            shiftPressed = true; 
+        if(code == KeyEvent.VK_LEFT) {
+            leftPressed = false; 
+        }
+        if(code == KeyEvent.VK_RIGHT) {
+            rightPressed = false; 
+        }
+        if(code == KeyEvent.VK_W) {
+            upPressed = false;
+        }
+        if(code == KeyEvent.VK_S) {
+            downPressed = false;
+        }
+        if(code == KeyEvent.VK_A) {
+            leftPressed = false;
+        }
+        if(code == KeyEvent.VK_D) {
+            rightPressed = false;
         }
     }
 
