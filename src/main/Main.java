@@ -1,5 +1,6 @@
 package main;
 
+import javax.sound.sampled.LineUnavailableException;
 import javax.swing.JFrame;
 
 public class Main {
@@ -21,5 +22,14 @@ public class Main {
         
         gamePanel.startGameThread();
 
+        
+        try {
+            //Start Music
+            SoundHandler.RunMusic("C:\\Users\\Acer\\Documents\\GitHub\\JavaGame\\src\\GameMusic\\Music.WAV");
+        } catch (LineUnavailableException ex) {
+        }
+       
+        
+        
     }
 }
