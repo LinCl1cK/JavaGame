@@ -45,7 +45,7 @@ public class Player extends Entity {
 
     // Collision area
     public Rectangle collisionArea;
-    private int collisionAreaOffsetX = -16; // Adjust as needed
+    private int collisionAreaOffsetX = -18; // Adjust as needed
     private int collisionAreaOffsetY = -15; // Adjust as needed
     private int collisionAreaWidth; 
     private int collisionAreaHeight;
