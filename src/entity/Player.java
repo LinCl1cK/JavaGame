@@ -68,7 +68,7 @@ public class Player extends Entity {
     public void setDefaultValues() {
         worldX = gp.tileSize * 47;
         worldY = gp.tileSize * 50;
-        speed = 6; // Adjust speed according to scale
+        speed = 4; // Adjust speed according to scale
 
         collisionAreaWidth = gp.tileSize - 10;
         collisionAreaHeight = gp.tileSize - 10;

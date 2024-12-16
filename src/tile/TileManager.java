@@ -23,8 +23,6 @@ public class TileManager {
     private BufferedImage baseTilesetImage;
     private BufferedImage additionalTilesetImage;
 
-    private String map = "dungeon";
-
     // Collision variables
     public Tile[] tiles; 
     public int[][] collisionLayer;
@@ -37,38 +35,13 @@ public class TileManager {
     public void loadMap() {
         try {
             // Loading map
-            if (map.equals("dungeon")) {
-                baseTilesetImage = ImageIO.read(new File("images/map/dungeon/Dungeon_Tileset.png"));
-                baseTileLayer = loadCSV("images/map/dungeon/DungeonMap01_Tile Layer 1.csv");
-                playerTileLayer = loadCSV("images/map/dungeon/DungeonMap01_Tile Layer 2.csv");
-                secondaryTileLayer = loadCSV("images/map/dungeon/DungeonMap01_structures.csv");
+            baseTilesetImage = ImageIO.read(new File("images/map/dungeon/Dungeon_Tileset.png"));
+            baseTileLayer = loadCSV("images/map/dungeon/DungeonMap01_Tile Layer 1.csv");
+            playerTileLayer = loadCSV("images/map/dungeon/DungeonMap01_Tile Layer 2.csv");
+            secondaryTileLayer = loadCSV("images/map/dungeon/DungeonMap01_structures.csv");
 
-                // Load collision layer
-                collisionLayer = loadCSV("images/map/dungeon/DungeonMap01_Collision.csv");
-
-            } else if (map.equals("forest")) {
-                baseTilesetImage = ImageIO.read(new File("images/map/forest/atlas.png"));
-                additionalTilesetImage = ImageIO.read(new File("images/map/forest/Fantasy RPG (Toony) 32x32.png"));
-                baseTileLayer = loadCSV("images/map/forest/ForestMap01_Tile Layer 1.csv");
-                playerTileLayer = loadCSV("images/map/forest/ForestMap01_path.csv");
-                secondaryTileLayer = loadCSV("images/map/forest/ForestMap01_structures.csv");
-                chestTileLayer = loadCSV("images/map/forest/ForestMap01_chest.csv");
-
-                // Load collision layer
-                collisionLayer = loadCSV("path/to/forest/ForestMap01_Collision.csv");
-
-            } else {
-                // Load base tileset and tile layer
-                baseTilesetImage = ImageIO.read(new File("images/map/atlas.png"));
-                baseTileLayer = loadCSV("images/map/SampleMap_Tile Layer 1.csv");
-
-                // Load additional tileset and tile layer
-                playerTileLayer = loadCSV("images/map/SampleMap_Tile Layer 2.csv");
-                secondaryTileLayer = loadCSV("images/map/SampleMap_Tile Layer 3.csv");
-
-                // Load collision layer
-                collisionLayer = loadCSV("path/to/sample/SampleMap_Collision.csv");
-            }
+            // Load collision layer
+            collisionLayer = loadCSV("images/map/dungeon/DungeonMap01_Collision.csv");
 
             // Setup tiles with collision info
             setupTiles();
@@ -85,11 +58,7 @@ public class TileManager {
             String line;
             int[][] layer;
 
-            if (map.equals("dungeon") || map.equals("forest")) {
-                layer = new int[60][66];
-            } else {
-                layer = new int[32][32]; // Adjust size based on your map dimensions
-            }
+            layer = new int[60][66];
 
             int row = 0;
             while ((line = br.readLine()) != null) {
