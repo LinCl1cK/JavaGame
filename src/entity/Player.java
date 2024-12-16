@@ -225,7 +225,7 @@ public class Player extends Entity {
         g2.drawImage(currentFrame, screenX, screenY, SPRITE_WIDTH * SCALE, SPRITE_HEIGHT * SCALE, null);
     
         // Optionally draw collision area for debugging (collisionAreaOffsetX - 60), screenY - (collisionAreaOffsetY - 60)
-        g2.drawRect(screenX - (collisionAreaOffsetX), screenY - (collisionAreaOffsetY), collisionAreaWidth, collisionAreaHeight);
+        // g2.drawRect(screenX - (collisionAreaOffsetX), screenY - (collisionAreaOffsetY), collisionAreaWidth, collisionAreaHeight);
     }
     
 }
