@@ -35,13 +35,13 @@ public class TileManager {
     public void loadMap() {
         try {
             // Loading map
-            baseTilesetImage = ImageIO.read(new File("images/map/dungeon/Dungeon_Tileset.png"));
-            baseTileLayer = loadCSV("images/map/dungeon/DungeonMap01_Tile Layer 1.csv");
-            playerTileLayer = loadCSV("images/map/dungeon/DungeonMap01_Tile Layer 2.csv");
-            secondaryTileLayer = loadCSV("images/map/dungeon/DungeonMap01_structures.csv");
+            baseTilesetImage = ImageIO.read(new File("images/dungeon/map/Dungeon_Tileset.png"));
+            baseTileLayer = loadCSV("images/dungeon/map/DungeonMap01_Tile Layer 1.csv");
+            playerTileLayer = loadCSV("images/dungeon/map/DungeonMap01_Tile Layer 2.csv");
+            secondaryTileLayer = loadCSV("images/dungeon/map/DungeonMap01_structures.csv");
 
             // Load collision layer
-            collisionLayer = loadCSV("images/map/dungeon/DungeonMap01_Collision.csv");
+            collisionLayer = loadCSV("images/dungeon/map/DungeonMap01_Collision.csv");
 
             // Setup tiles with collision info
             setupTiles();
