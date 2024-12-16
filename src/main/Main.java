@@ -25,7 +25,7 @@ public class Main {
         
         try {
             //Start Music
-            SoundHandler.RunMusic("C:\\Users\\Acer\\Documents\\GitHub\\JavaGame\\src\\GameMusic\\Music.WAV");
+            SoundHandler.RunMusic("src/GameMusic/Music.WAV");
         } catch (LineUnavailableException ex) {
         }
     
