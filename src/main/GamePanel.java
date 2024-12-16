@@ -34,9 +34,10 @@ public class GamePanel extends JPanel implements Runnable {
 
     // Instances
     KeyHandler keyH = new KeyHandler();
+    TileManager tileManager; 
+    public Player player;
+
     Thread gameThread; // when game thread is called, it automatically runs the 'run' method
-    public Player player = new Player(this, keyH);
-    TileManager tileManager = new TileManager(this);
 
     // Game Intro
     private boolean isInIntro = true;
@@ -48,6 +49,10 @@ public class GamePanel extends JPanel implements Runnable {
         this.setDoubleBuffered(true);
         this.addKeyListener(keyH);
         this.setFocusable(true);
+
+        // Initialize TileManager and Player after dimensions are set
+        tileManager = new TileManager(this);
+        player = new Player(this, keyH, tileManager);
 
         // Load map layers and tilesets
         tileManager.loadMap();
@@ -111,21 +116,18 @@ public class GamePanel extends JPanel implements Runnable {
             // Draw base tile layer
             tileManager.drawBaseLayer(g2, player.worldX, player.worldY);
 
-            tileManager.drawPlayerLayer(g2, player.worldX, player.worldY);
+            tileManager.drawPlayerTileLayer(g2, player.worldX, player.worldY);
+
+            tileManager.drawChestLayer(g2, player.worldX, player.worldY);
 
             // Draw player
             player.draw(g2);
 
             // Draw additional tile layer
-            tileManager.drawAdditionalLayer(g2, player.worldX, player.worldY);
+            tileManager.drawSecondaryLayer(g2, player.worldX, player.worldY);
         }
 
         g2.dispose();
-    }
-
-    public void showGamePanel() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'showGamePanel'");
     }
 
     // Check if any key is pressed to skip intro
