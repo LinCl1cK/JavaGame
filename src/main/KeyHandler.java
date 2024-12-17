@@ -96,6 +96,19 @@ public class KeyHandler implements KeyListener {
     // Check if any key is pressed to skip intro
     public boolean anyKeyPressed() {
         return upPressed || downPressed || leftPressed || rightPressed 
-           || enterPressedForResume || spacePressed || shiftPressed; 
+           || enterPressedForResume || spacePressed || shiftPressed
+           || pausePressed; 
     }
+
+    public void resetAllKeys() {
+        upPressed = false;
+        downPressed = false;
+        leftPressed = false;
+        rightPressed = false;
+        enterPressedForResume = false;
+        spacePressed = false;
+        shiftPressed = false;
+        pausePressed = false;
+    }
+    
 }

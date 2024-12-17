@@ -18,8 +18,8 @@ public class GamePanel extends JPanel implements Runnable {
     final int scale = 3;
 
     public final int tileSize = originalTileSize * scale; // 48 x 48 Tile
-    final int maxScreenCol = 16;
-    final int maxScreenRow = 12;
+    final int maxScreenCol = 12;
+    final int maxScreenRow = 9;
     public final int screenWidth = tileSize * maxScreenCol; // 768 px
     public final int screenHeight = tileSize * maxScreenRow; // 576 px
 
@@ -46,7 +46,7 @@ public class GamePanel extends JPanel implements Runnable {
     private BufferedImage introImage;
     private BufferedImage comicImage; // Full comic image
     private long comicStartTime;      // Time when comic display starts
-    private final int COMIC_DISPLAY_DURATION = 5000; // Comic duration in milliseconds
+    private final int COMIC_DISPLAY_DURATION = 8000; // Comic duration in milliseconds
 
     // Pause Variables
     private BufferedImage pauseImage;
@@ -122,9 +122,11 @@ public class GamePanel extends JPanel implements Runnable {
         // Skip intro screen
         if (isInIntro) {
             if (keyH.anyKeyPressed()) {
+                System.out.println("Intro skipped. ");
                 isInIntro = false;
                 isInComicFull = true;
                 comicStartTime = System.currentTimeMillis(); // Set comic start time
+                keyH.resetAllKeys();
             }
             return;
         }
@@ -132,8 +134,10 @@ public class GamePanel extends JPanel implements Runnable {
         // Show comic image for a fixed duration
         if (isInComicFull) {
             long elapsedTime = System.currentTimeMillis() - comicStartTime;
-            if (elapsedTime >= COMIC_DISPLAY_DURATION) {
+            if (elapsedTime >= COMIC_DISPLAY_DURATION || keyH.anyKeyPressed()) {
+                System.out.println("Comic skipped or ended.");
                 isInComicFull = false; // Exit comic display and start the game
+                keyH.resetAllKeys();
             }
             return;
         }
