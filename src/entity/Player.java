@@ -147,16 +147,16 @@ public class Player extends Entity {
         try {
             switch (character) {
                 case "slime1":
-                    spriteSheet = ImageIO.read(new File("images/Slime character/PNG/Slime 1/Slime1_Run_full.png"));
-                    idleSpriteSheet = ImageIO.read(new File("images/Slime character/PNG/Slime 1/Slime1_Idle_full.png"));
+                    spriteSheet = ImageIO.read(new File("src/assets/Slime character/PNG/Slime 1/Slime1_Run_full.png"));
+                    idleSpriteSheet = ImageIO.read(new File("src/assets/Slime character/PNG/Slime 1/Slime1_Idle_full.png"));
                     break;
                 case "slime2":
-                    spriteSheet = ImageIO.read(new File("images/Slime character/PNG/Slime 2/Slime2_Run_full.png"));
-                    idleSpriteSheet = ImageIO.read(new File("images/Slime character/PNG/Slime 2/Slime2_Idle_full.png"));
+                    spriteSheet = ImageIO.read(new File("src/assets/Slime character/PNG/Slime 2/Slime2_Run_full.png"));
+                    idleSpriteSheet = ImageIO.read(new File("src/assets/Slime character/PNG/Slime 2/Slime2_Idle_full.png"));
                     break;
                 case "slime3":
-                    spriteSheet = ImageIO.read(new File("images/Slime character/PNG/Slime 3/Slime3_Run_full.png"));
-                    idleSpriteSheet = ImageIO.read(new File("images/Slime character/PNG/Slime 3/Slime3_Idle_full.png"));
+                    spriteSheet = ImageIO.read(new File("src/assets/Slime character/PNG/Slime 3/Slime3_Run_full.png"));
+                    idleSpriteSheet = ImageIO.read(new File("src/assets/Slime character/PNG/Slime 3/Slime3_Idle_full.png"));
                     break;
                 default:
                     break;

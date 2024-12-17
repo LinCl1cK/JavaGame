@@ -25,7 +25,7 @@ public class Main {
         
         try {
             //Start Music
-            SoundHandler.RunMusic("src/GameMusic/Music.WAV");
+            SoundHandler.RunMusic("src/assets/GameMusic/Music.WAV");
         } catch (LineUnavailableException ex) {
         }
     
