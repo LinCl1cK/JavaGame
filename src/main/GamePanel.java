@@ -3,12 +3,11 @@ package main;
 import entity.Player;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import javax.imageio.ImageIO;
+import javax.sound.sampled.*;
 import javax.swing.JPanel;
 import tile.TileManager;
 
@@ -27,30 +26,35 @@ public class GamePanel extends JPanel implements Runnable {
     // World Settings
     public final int maxWorldCol = 32;
     public final int maxWorldRow = 32;
-    public final int worldWidth = tileSize * maxScreenCol;
-    public final int worldHeight = tileSize * maxScreenRow;
 
     // Refresh rate
     int FPS = 60;
 
     // Instances
     KeyHandler keyH = new KeyHandler();
-    TileManager tileManager; 
+    TileManager tileManager;
     public Player player;
 
-    Thread gameThread; 
+    Thread gameThread;
 
-    // Game Intro
-    private boolean isInIntro = true;
-    private BufferedImage introImage;
-
-    // Pause control
+    // Game States
+    private boolean isInIntro = true;    // Intro state
+    private boolean isInComicFull = false; // Full comic display state
     private boolean isPaused = false;
-    private boolean isGameOver = false; 
+
+    // Intro and Comic Variables
+    private BufferedImage introImage;
+    private BufferedImage comicImage; // Full comic image
+    private long comicStartTime;      // Time when comic display starts
+    private final int COMIC_DISPLAY_DURATION = 5000; // Comic duration in milliseconds
+
+    // Pause Variables
     private BufferedImage pauseImage;
 
-    //gameCleared
-    public boolean gameCleared = false; 
+    // Music Control
+    private Clip backgroundMusic;
+    private boolean isMusicPlaying = false;
+    private long musicPosition = 0;
 
     public GamePanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -59,20 +63,27 @@ public class GamePanel extends JPanel implements Runnable {
         this.addKeyListener(keyH);
         this.setFocusable(true);
 
-        // Initialize TileManager and Player after dimensions are set
+        // Initialize TileManager and Player
         tileManager = new TileManager(this);
         player = new Player(this, keyH, tileManager);
-        
 
-    
-        // Load map layers and tilesets
         tileManager.loadMap();
 
+        // Load assets
         try {
             introImage = ImageIO.read(getClass().getResourceAsStream("/assets/resources/Intro/Nigeru Sur.png"));
-            pauseImage = ImageIO.read(getClass().getResourceAsStream("/assets/resources/Intro/MENU.png")); 
-        } catch (IOException e) {
-            e.printStackTrace();  
+            pauseImage = ImageIO.read(getClass().getResourceAsStream("/assets/resources/Intro/MENU.png"));
+            comicImage = ImageIO.read(getClass().getResourceAsStream("/assets/resources/Intro/SlimeKomikcut.png"));
+
+            // Load and play background music
+            AudioInputStream audioStream = AudioSystem.getAudioInputStream(getClass().getResource("/assets/GameMusic/Music.wav"));
+            backgroundMusic = AudioSystem.getClip();
+            backgroundMusic.open(audioStream);
+            backgroundMusic.loop(Clip.LOOP_CONTINUOUSLY);
+            isMusicPlaying = true;
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -87,53 +98,68 @@ public class GamePanel extends JPanel implements Runnable {
         double delta = 0;
         long lastTime = System.nanoTime();
         long currentTime;
-        long timer = 0;
-        int drawCount = 0;
+
+        // Set comic start time right after the intro
+        comicStartTime = System.currentTimeMillis();
 
         while (gameThread != null) {
             currentTime = System.nanoTime();
             delta += (currentTime - lastTime) / drawInterval;
             lastTime = currentTime;
 
-            checkIntroSkip();
-
             if (delta >= 1) {
                 update(delta);
                 repaint();
                 delta--;
-                drawCount++;
             }
-
-            if (timer >= 1000000000) {
-                drawCount = 0;
-                timer = 0;
+            if (delta > 1.5) {  // Maximum delta threshold to prevent jumps
+                delta = 1;
             }
         }
     }
 
     public void update(double delta) {
+        // Skip intro screen
+        if (isInIntro) {
+            if (keyH.anyKeyPressed()) {
+                isInIntro = false;
+                isInComicFull = true;
+                comicStartTime = System.currentTimeMillis(); // Set comic start time
+            }
+            return;
+        }
+
+        // Show comic image for a fixed duration
+        if (isInComicFull) {
+            long elapsedTime = System.currentTimeMillis() - comicStartTime;
+            if (elapsedTime >= COMIC_DISPLAY_DURATION) {
+                isInComicFull = false; // Exit comic display and start the game
+            }
+            return;
+        }
+
+        // Pause handling
         if (keyH.pausePressed) {
             if (isPaused) {
                 // If already paused, ESC will quit the game
-                System.exit(0);  
+                System.exit(0);  // Exit the game
             } else {
-                
+                // If not paused, ESC will pause the game
                 isPaused = true;
+                stopMusic(); // Stop the music when the game is paused
             }
-            keyH.pausePressed = false;  
+            keyH.pausePressed = false;  // Reset pause flag after processing
         }
 
         // Handle resume on ENTER key
         if (keyH.enterPressedForResume && isPaused) {
-            isPaused = false; 
-            keyH.enterPressedForResume = false;
+            isPaused = false; // Resume game when Enter is pressed
+            startMusic(); // Start the music when the game is resumed
+            keyH.enterPressedForResume = false; // Reset resume flag
         }
 
         if (!isInIntro && !isPaused) { 
             player.update(delta); 
-        }
-        if (gameCleared) {
-           
         }
     }
 
@@ -143,39 +169,39 @@ public class GamePanel extends JPanel implements Runnable {
         Graphics2D g2 = (Graphics2D) g;
 
         if (isInIntro) {
-            g2.drawImage(introImage, 0, 0, screenWidth, screenHeight, null); 
+            g2.drawImage(introImage, 0, 0, screenWidth, screenHeight, null);
+        } else if (isInComicFull) {
+            // Display the full comic image
+            g2.drawImage(comicImage, 0, 0, screenWidth, screenHeight, null);
         } else if (isPaused) {
+            // Draw pause screen
             g2.setColor(Color.BLACK);
             g2.fillRect(0, 0, screenWidth, screenHeight);
-            g2.drawImage(pauseImage, 0, 0, screenWidth, screenHeight, null); 
-            // Draw base tile layer
+            g2.drawImage(pauseImage, 0, 0, screenWidth, screenHeight, null);
+        } else {
+            // Draw game layers
             tileManager.drawBaseLayer(g2, player.worldX, player.worldY);
-
             tileManager.drawPlayerTileLayer(g2, player.worldX, player.worldY);
-
             tileManager.drawMiscLayer(g2, player.worldX, player.worldY);
-
-            // Draw player
             player.draw(g2);
-
-            // Draw additional tile layer
             tileManager.drawSecondaryLayer(g2, player.worldX, player.worldY);
-
-            if (gameCleared) {
-                g2.setColor(Color.WHITE);
-                g2.setFont(new Font("Arial", Font.BOLD, 32));
-                g2.drawString("Game Cleared!", screenWidth / 2 - 100, screenHeight / 2);
-            }
         }
 
         g2.dispose();
     }
 
-    // Check if any key is pressed to skip intro
-    public void checkIntroSkip() {
-        if (keyH.anyKeyPressed()) {
-            isInIntro = false;  
+    // Music Controls
+    public void stopMusic() {
+        if (backgroundMusic != null && backgroundMusic.isRunning()) {
+            musicPosition = backgroundMusic.getMicrosecondPosition();
+            backgroundMusic.stop();
         }
-        
+    }
+
+    public void startMusic() {
+        if (backgroundMusic != null && !backgroundMusic.isRunning()) {
+            backgroundMusic.setMicrosecondPosition(musicPosition);
+            backgroundMusic.loop(Clip.LOOP_CONTINUOUSLY);
+        }
     }
 }

@@ -129,17 +129,7 @@ public class Player extends Entity {
         }
     
         wasMoving = isMoving;
-        if (tileManager.checkCollisionWithKey(collisionArea)) {
-            hasKey = true;
-            // Optionally play a sound effect here
-        }
-
-        // Check for door collision (assuming key is acquired)
-        if (hasKey && tileManager.checkCollisionWithDoor(collisionArea)) {
-            tileManager.isDoorOpen = true;
-            // Optionally play a sound effect here
-            tileManager.isDoorOpen = true;
-        }
+        
     }
     
     
