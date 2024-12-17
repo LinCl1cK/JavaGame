@@ -3,6 +3,7 @@ package main;
 import entity.Player;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -43,6 +44,9 @@ public class GamePanel extends JPanel implements Runnable {
     private boolean isInIntro = true;
     private BufferedImage introImage;
 
+    //gameCleared
+    public boolean gameCleared = false; 
+
     public GamePanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
         this.setBackground(Color.BLACK);
@@ -53,6 +57,7 @@ public class GamePanel extends JPanel implements Runnable {
         // Initialize TileManager and Player after dimensions are set
         tileManager = new TileManager(this);
         player = new Player(this, keyH, tileManager);
+        
 
     
         // Load map layers and tilesets
@@ -103,6 +108,9 @@ public class GamePanel extends JPanel implements Runnable {
         if (!isInIntro) { 
             player.update(delta); 
         }
+        if (gameCleared) {
+           
+        }
     }
 
     @Override
@@ -125,6 +133,12 @@ public class GamePanel extends JPanel implements Runnable {
 
             // Draw additional tile layer
             tileManager.drawSecondaryLayer(g2, player.worldX, player.worldY);
+
+            if (gameCleared) {
+                g2.setColor(Color.WHITE);
+                g2.setFont(new Font("Arial", Font.BOLD, 32));
+                g2.drawString("Game Cleared!", screenWidth / 2 - 100, screenHeight / 2);
+            }
         }
 
         g2.dispose();
@@ -135,5 +149,6 @@ public class GamePanel extends JPanel implements Runnable {
         if (keyH.anyKeyPressed()) {
             isInIntro = false;  // Skip intro and start the game
         }
+        
     }
 }

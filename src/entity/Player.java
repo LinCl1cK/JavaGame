@@ -1,12 +1,11 @@
 package entity;
 
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
-
-import java.awt.Rectangle;
 import main.GamePanel;
 import main.KeyHandler;
 import tile.TileManager;
@@ -45,10 +44,14 @@ public class Player extends Entity {
 
     // Collision area
     public Rectangle collisionArea;
-    private int collisionAreaOffsetX = -18; // Adjust as needed
+    private int collisionAreaOffsetX = -17; // Adjust as needed
     private int collisionAreaOffsetY = -15; // Adjust as needed
     private int collisionAreaWidth; 
     private int collisionAreaHeight;
+
+    //key
+    private boolean hasKey = false;
+
     
     public Player(GamePanel gp, KeyHandler keyH, TileManager tileManager) {
         this.gp = gp;
@@ -126,7 +129,19 @@ public class Player extends Entity {
         }
     
         wasMoving = isMoving;
+        if (tileManager.checkCollisionWithKey(collisionArea)) {
+            hasKey = true;
+            // Optionally play a sound effect here
+        }
+
+        // Check for door collision (assuming key is acquired)
+        if (hasKey && tileManager.checkCollisionWithDoor(collisionArea)) {
+            tileManager.isDoorOpen = true;
+            // Optionally play a sound effect here
+            tileManager.isDoorOpen = true;
+        }
     }
+    
     
     private void loadSpriteSheets() {
         try {
@@ -180,6 +195,24 @@ public class Player extends Entity {
             leftIdleFrames[i] = idleSpriteSheet.getSubimage(i * SPRITE_WIDTH, 2 * SPRITE_HEIGHT, SPRITE_WIDTH, SPRITE_HEIGHT);
             rightIdleFrames[i] = idleSpriteSheet.getSubimage(i * SPRITE_WIDTH, 3 * SPRITE_HEIGHT, SPRITE_WIDTH, SPRITE_HEIGHT);
         }
+    }
+
+    // Helper method in Player class
+    private boolean checkCollisionWithTile(int tileID) {
+        for (int row = 0; row < tileManager.collisionLayer.length; row++) {
+            for (int col = 0; col < tileManager.collisionLayer[row].length; col++) {
+                if (tileManager.collisionLayer[row][col] == tileID) {
+                    int tileX = col * gp.tileSize;
+                    int tileY = row * gp.tileSize;
+                    Rectangle tileArea = new Rectangle(tileX, tileY, gp.tileSize, gp.tileSize);
+
+                if (collisionArea.intersects(tileArea)) {
+                    return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     public void draw(Graphics2D g2) {
