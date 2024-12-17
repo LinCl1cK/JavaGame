@@ -37,11 +37,16 @@ public class GamePanel extends JPanel implements Runnable {
     TileManager tileManager; 
     public Player player;
 
-    Thread gameThread; // when game thread is called, it automatically runs the 'run' method
+    Thread gameThread; 
 
     // Game Intro
     private boolean isInIntro = true;
     private BufferedImage introImage;
+
+    // Pause control
+    private boolean isPaused = false;
+    private boolean isGameOver = false; 
+    private BufferedImage pauseImage;
 
     public GamePanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -59,8 +64,10 @@ public class GamePanel extends JPanel implements Runnable {
         tileManager.loadMap();
 
         try {
-            introImage = ImageIO.read(getClass().getResourceAsStream("/assets/resources/Intro/Nigeru Sur.png")); 
+            introImage = ImageIO.read(getClass().getResourceAsStream("/assets/resources/Intro/Nigeru Sur.png"));
+            pauseImage = ImageIO.read(getClass().getResourceAsStream("/assets/resources/Intro/MENU.png")); 
         } catch (IOException e) {
+            e.printStackTrace();  
         }
     }
 
@@ -100,7 +107,24 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void update(double delta) {
-        if (!isInIntro) { 
+        if (keyH.pausePressed) {
+            if (isPaused) {
+                // If already paused, ESC will quit the game
+                System.exit(0);  
+            } else {
+                
+                isPaused = true;
+            }
+            keyH.pausePressed = false;  
+        }
+
+        // Handle resume on ENTER key
+        if (keyH.enterPressedForResume && isPaused) {
+            isPaused = false; /
+            keyH.enterPressedForResume = false;
+        }
+
+        if (!isInIntro && !isPaused) { 
             player.update(delta); 
         }
     }
@@ -108,11 +132,14 @@ public class GamePanel extends JPanel implements Runnable {
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        Graphics2D g2 = (Graphics2D) g; // Upgrade version of drawing
+        Graphics2D g2 = (Graphics2D) g;
 
         if (isInIntro) {
             g2.drawImage(introImage, 0, 0, screenWidth, screenHeight, null); 
-        } else {
+        } else if (isPaused) {
+            g2.setColor(Color.BLACK);
+            g2.fillRect(0, 0, screenWidth, screenHeight);
+            g2.drawImage(pauseImage, 0, 0, screenWidth, screenHeight, null); 
             // Draw base tile layer
             tileManager.drawBaseLayer(g2, player.worldX, player.worldY);
 
@@ -133,7 +160,7 @@ public class GamePanel extends JPanel implements Runnable {
     // Check if any key is pressed to skip intro
     public void checkIntroSkip() {
         if (keyH.anyKeyPressed()) {
-            isInIntro = false;  // Skip intro and start the game
+            isInIntro = false;  
         }
     }
 }
