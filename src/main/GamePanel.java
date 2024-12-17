@@ -145,12 +145,15 @@ public class GamePanel extends JPanel implements Runnable {
         // Pause handling
         if (keyH.pausePressed) {
             if (isPaused) {
-                // If already paused, ESC will quit the game
-                System.exit(0);  // Exit the game
+                System.out.println("Game exited.");
+                System.exit(0); // Quit game on second ESC
+               
             } else {
                 // If not paused, ESC will pause the game
-                isPaused = true;
-                stopMusic(); // Stop the music when the game is paused
+                isPaused = true; //pause the game
+                System.out.println("Game paused. Music stopped.");
+                SoundHandler.stopMusic();
+
             }
             keyH.pausePressed = false;  // Reset pause flag after processing
         }
@@ -158,7 +161,9 @@ public class GamePanel extends JPanel implements Runnable {
         // Handle resume on ENTER key
         if (keyH.enterPressedForResume && isPaused) {
             isPaused = false; // Resume game when Enter is pressed
-            startMusic(); // Start the music when the game is resumed
+            System.out.println("Game resumed. Music started.");
+            SoundHandler.resumeMusic();  // Resume the music when the game is resumed
+            keyH.enterPressedForResume = false; // Reset resume flag
             keyH.enterPressedForResume = false; // Reset resume flag
         }
 
@@ -205,13 +210,17 @@ public class GamePanel extends JPanel implements Runnable {
         if (backgroundMusic != null && backgroundMusic.isRunning()) {
             musicPosition = backgroundMusic.getMicrosecondPosition();
             backgroundMusic.stop();
+            backgroundMusic.flush(); // Clear any buffered data
+            System.out.println("Music stopped at position: " + musicPosition);
         }
     }
 
     public void startMusic() {
         if (backgroundMusic != null && !backgroundMusic.isRunning()) {
             backgroundMusic.setMicrosecondPosition(musicPosition);
+            backgroundMusic.start();
             backgroundMusic.loop(Clip.LOOP_CONTINUOUSLY);
+            
         }
     }
 }

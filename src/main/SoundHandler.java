@@ -9,18 +9,44 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
 public class SoundHandler {
+    private static Clip clip;  // Static variable to hold the clip instance
 
-        public static void RunMusic(String path) throws LineUnavailableException{
-                try {
-                        AudioInputStream inputStream = AudioSystem.getAudioInputStream(new File (path));
-                        Clip clip = AudioSystem.getClip();
-                        clip.open(inputStream);
-                        clip.loop(0);
-                        clip.start();
-                } catch (UnsupportedAudioFileException e) {
-                        e.printStackTrace();
-                } catch (IOException e) {
-                        e.printStackTrace();
-                }
+    // Method to play music
+    public static void playMusic(String path) {
+        try {
+            // Check if clip is already playing, then don't load again
+            if (clip != null && clip.isRunning()) {
+                return; // Music is already playing, no need to restart it
+            }
+
+            AudioInputStream inputStream = AudioSystem.getAudioInputStream(new File(path));
+            clip = AudioSystem.getClip();
+            clip.open(inputStream);
+            clip.loop(Clip.LOOP_CONTINUOUSLY);  // Loop music indefinitely
+            clip.start();
+        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+            e.printStackTrace();
         }
+    }
+
+    // Method to stop music
+    public static void stopMusic() {
+        if (clip != null && clip.isRunning()) {
+            clip.stop();  // Stop the music
+        }
+    }
+
+    // Method to pause the music
+    public static void pauseMusic() {
+        if (clip != null && clip.isRunning()) {
+            clip.stop();  // Stop the music without resetting the position
+        }
+    }
+
+    // Method to resume music
+    public static void resumeMusic() {
+        if (clip != null && !clip.isRunning()) {
+            clip.start();  // Resume the music from where it was paused
+        }
+    }
 }
