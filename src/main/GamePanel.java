@@ -59,7 +59,7 @@ public class GamePanel extends JPanel implements Runnable {
         tileManager.loadMap();
 
         try {
-            introImage = ImageIO.read(getClass().getResourceAsStream("/resources/Intro/Nigeru Sur.png")); 
+            introImage = ImageIO.read(getClass().getResourceAsStream("/assets/resources/Intro/Nigeru Sur.png")); 
         } catch (IOException e) {
         }
     }
