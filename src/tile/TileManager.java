@@ -19,7 +19,7 @@ public class TileManager {
     private int[][] baseTileLayer;
     private int[][] playerTileLayer;
     private int[][] secondaryTileLayer;
-    private int[][] chestTileLayer;
+    private int[][] miscTileLayer;
     private BufferedImage baseTilesetImage;
     private BufferedImage additionalTilesetImage;
 
@@ -35,13 +35,13 @@ public class TileManager {
     public void loadMap() {
         try {
             // Loading map
-            baseTilesetImage = ImageIO.read(new File("images/dungeon/map/Dungeon_Tileset.png"));
-            baseTileLayer = loadCSV("images/dungeon/map/DungeonMap01_Tile Layer 1.csv");
-            playerTileLayer = loadCSV("images/dungeon/map/DungeonMap01_Tile Layer 2.csv");
-            secondaryTileLayer = loadCSV("images/dungeon/map/DungeonMap01_structures.csv");
+            baseTilesetImage = ImageIO.read(new File("assets/dungeon/map/Dungeon_Tileset.png"));
+            baseTileLayer = loadCSV("assets/dungeon/map/DungeonMap01_Tile Layer 1.csv");
+            playerTileLayer = loadCSV("assets/dungeon/map/DungeonMap01_Tile Layer 2.csv");
+            secondaryTileLayer = loadCSV("assets/dungeon/map/DungeonMap01_structures.csv");
 
             // Load collision layer
-            collisionLayer = loadCSV("images/dungeon/map/DungeonMap01_Collision.csv");
+            collisionLayer = loadCSV("assets/dungeon/map/DungeonMap01_Collision.csv");
 
             // Setup tiles with collision info
             setupTiles();
@@ -116,8 +116,8 @@ public class TileManager {
         drawLayer(g2, baseTilesetImage, baseTileLayer, playerWorldX, playerWorldY);
     }
 
-    public void drawChestLayer(Graphics2D g2, int playerWorldX, int playerWorldY) {
-        drawLayer(g2, additionalTilesetImage, chestTileLayer, playerWorldX, playerWorldY);
+    public void drawMiscLayer(Graphics2D g2, int playerWorldX, int playerWorldY) {
+        drawLayer(g2, additionalTilesetImage, miscTileLayer, playerWorldX, playerWorldY);
     }
 
     public void drawPlayerTileLayer(Graphics2D g2, int playerWorldX, int playerWorldY) {
