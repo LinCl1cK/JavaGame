@@ -63,7 +63,7 @@ public class GamePanel extends JPanel implements Runnable {
         this.addKeyListener(keyH);
         this.setFocusable(true);
 
-        // Initialize TileManager and Player
+        // Instances
         tileManager = new TileManager(this);
         player = new Player(this, keyH, tileManager);
 
@@ -183,8 +183,14 @@ public class GamePanel extends JPanel implements Runnable {
             tileManager.drawBaseLayer(g2, player.worldX, player.worldY);
             tileManager.drawPlayerTileLayer(g2, player.worldX, player.worldY);
             tileManager.drawMiscLayer(g2, player.worldX, player.worldY);
-            player.draw(g2);
             tileManager.drawSecondaryLayer(g2, player.worldX, player.worldY);
+
+            // Draw player
+            player.draw(g2);
+
+            // Draw objects and doors with animations
+            tileManager.drawObjectsAndDoors(g2, player.worldX, player.worldY);
+            //tileManager.drawDoorAnimations(g2, player.worldX, player.worldY);
         }
 
         g2.dispose();

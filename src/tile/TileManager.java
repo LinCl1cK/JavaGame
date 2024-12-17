@@ -23,6 +23,11 @@ public class TileManager {
     private BufferedImage baseTilesetImage;
     private BufferedImage additionalTilesetImage;
 
+    public int[][] objectMap;
+    public int[][] doorMap;
+    public BufferedImage[][] objectAnimations;
+    public BufferedImage[][] doorAnimations;
+
     // Collision variables
     public Tile[] tiles; 
     public int[][] collisionLayer;
@@ -39,6 +44,12 @@ public class TileManager {
             baseTileLayer = loadCSV("src/assets/dungeon/map/DungeonMap01_Tile Layer 1.csv");
             playerTileLayer = loadCSV("src/assets/dungeon/map/DungeonMap01_Tile Layer 2.csv");
             secondaryTileLayer = loadCSV("src/assets/dungeon/map/DungeonMap01_structures.csv");
+
+            // Load maps and spritesheets
+            objectMap = loadCSV("src/assets/dungeon/map/DungeonMap01_Objects.csv");
+            doorMap = loadCSV("src/assets/dungeon/map/DungeonMap01_Doors.csv");
+            objectAnimations = loadAnimatedSpriteSheet("src/assets/dungeon/map/Assets.png", 11, 4);
+            doorAnimations = loadAnimatedSpriteSheet("src/assets/dungeon/map/door.png", 4, 2);
 
             // Load collision layer
             collisionLayer = loadCSV("src/assets/dungeon/map/DungeonMap01_Collision.csv");
@@ -58,7 +69,7 @@ public class TileManager {
             String line;
             int[][] layer;
 
-            layer = new int[60][66];
+            layer = new int[60][66]; // Adjust size based on your map dimensions
 
             int row = 0;
             while ((line = br.readLine()) != null) {
@@ -72,13 +83,28 @@ public class TileManager {
         }
     }
 
+    public BufferedImage getSprite(BufferedImage sheet, int col, int row) {
+        return sheet.getSubimage((col - 1) * gp.originalTileSize, (row - 1) * gp.originalTileSize, gp.originalTileSize, gp.originalTileSize);
+    }
+
+    public BufferedImage[][] loadAnimatedSpriteSheet(String filePath, int rows, int frames) throws IOException {
+        BufferedImage sheet = ImageIO.read(new File(filePath));
+        BufferedImage[][] sprites = new BufferedImage[rows][frames];
+        for (int row = 0; row < rows; row++) {
+            for (int frame = 0; frame < frames; frame++) {
+                sprites[row][frame] = sheet.getSubimage(frame * gp.originalTileSize, row * gp.originalTileSize, gp.originalTileSize, gp.originalTileSize);
+            }
+        }
+        return sprites;
+    }
+
     private void setupTiles() {
         // Initialize all tiles
         for (int i = 0; i < tiles.length; i++) {
             tiles[i] = new Tile();
             tiles[i].collision = false; // Default to walkable
         }
-    
+
         // Set collision properties based on collisionLayer
         for (int row = 0; row < collisionLayer.length; row++) {
             for (int col = 0; col < collisionLayer[row].length; col++) {
@@ -89,17 +115,17 @@ public class TileManager {
             }
         }
     }
-    
+
     public boolean isCollision(Rectangle playerArea) {
         for (int row = 0; row < collisionLayer.length; row++) {
             for (int col = 0; col < collisionLayer[row].length; col++) {
                 int tileIndex = collisionLayer[row][col];
-    
+
                 if (tiles[tileIndex].collision) {
                     int tileX = col * gp.tileSize;
                     int tileY = row * gp.tileSize;
                     Rectangle tileArea = new Rectangle(tileX, tileY, gp.tileSize, gp.tileSize);
-    
+
                     if (playerArea.intersects(tileArea)) {
                         System.out.println("Collision detected at: (" + tileX + ", " + tileY + ")");
                         return true;
@@ -109,8 +135,6 @@ public class TileManager {
         }
         return false;
     }
-        
-    // MovePlayer is now integrated in Player class, no need here
 
     public void drawBaseLayer(Graphics2D g2, int playerWorldX, int playerWorldY) {
         drawLayer(g2, baseTilesetImage, baseTileLayer, playerWorldX, playerWorldY);
@@ -150,6 +174,42 @@ public class TileManager {
         }
     }
 
+    public void drawObjectsAndDoors(Graphics2D g2, int playerWorldX, int playerWorldY) {
+        drawObjectAnimations(g2, playerWorldX, playerWorldY);
+        drawDoorAnimations(g2, playerWorldX, playerWorldY);
+    }
+
+    public void drawObjectAnimations(Graphics2D g2, int playerWorldX, int playerWorldY) {
+        long currentTime = System.currentTimeMillis();
+        drawAnimatedLayer(g2, objectMap, objectAnimations, playerWorldX, playerWorldY, currentTime);
+    }
+
+    public void drawDoorAnimations(Graphics2D g2, int playerWorldX, int playerWorldY) {
+        long currentTime = System.currentTimeMillis();
+        drawAnimatedLayer(g2, doorMap, doorAnimations, playerWorldX, playerWorldY, currentTime);
+    }
+
+    private void drawAnimatedLayer(Graphics2D g2, int[][] map, BufferedImage[][] animations, int playerWorldX, int playerWorldY, long currentTime) {
+        for (int row = 0; row < map.length; row++) {
+            for (int col = 0; col < map[row].length; col++) {
+                int tileIndex = map[row][col];
+                if (tileIndex >= 0 && tileIndex < animations.length) {
+                    int frameIndex = (int) ((currentTime / 500) % animations[tileIndex].length);  // Change '100' to control speed
+                    BufferedImage sprite = animations[tileIndex][frameIndex];
+    
+                    int screenX = col * gp.tileSize - playerWorldX + gp.screenWidth / 2;
+                    int screenY = row * gp.tileSize - playerWorldY + gp.screenHeight / 2;
+    
+                    // Only draw tiles within the visible screen area
+                    if (screenX + gp.tileSize > 0 && screenX < gp.screenWidth &&
+                        screenY + gp.tileSize > 0 && screenY < gp.screenHeight) {
+                        g2.drawImage(sprite, screenX, screenY, gp.tileSize, gp.tileSize, null);
+                    }
+                }
+            }
+        }
+    }
+        
     // Testing method to print collision data
     public void printCollisionData() {
         System.out.println("Collision Layer Data:");
@@ -159,13 +219,13 @@ public class TileManager {
             }
             System.out.println();
         }
-    
+
         System.out.println("\nTile Collision Properties:");
         for (int i = 0; i < tiles.length; i++) {
             System.out.println("Tile " + i + ": " + (tiles[i].collision ? "solid" : "walkable"));
         }
     }
-    
+
     // Testing method to check collision at specific coordinates
     public boolean checkCollisionAt(int x, int y) {
         Rectangle testArea = new Rectangle(x, y, player.collisionArea.width, player.collisionArea.height);
@@ -173,8 +233,4 @@ public class TileManager {
         System.out.println("Collision at (" + x + ", " + y + "): " + collision);
         return collision;
     }
-
-   
-
-    
 }
