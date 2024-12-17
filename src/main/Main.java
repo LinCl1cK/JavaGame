@@ -23,11 +23,7 @@ public class Main {
         gamePanel.startGameThread();
 
         
-        try {
-            //Start Music
-            SoundHandler.RunMusic("src/assets/GameMusic/Music.WAV");
-        } catch (LineUnavailableException ex) {
-        }
+      
     
         
         

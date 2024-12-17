@@ -8,6 +8,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.imageio.ImageIO;
+import javax.sound.sampled.*;
 import javax.swing.JPanel;
 import tile.TileManager;
 
@@ -34,7 +35,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     // Instances
     KeyHandler keyH = new KeyHandler();
-    TileManager tileManager; 
+    TileManager tileManager;
     public Player player;
 
     Thread gameThread; // when game thread is called, it automatically runs the 'run' method
@@ -48,6 +49,11 @@ public class GamePanel extends JPanel implements Runnable {
     private boolean isGameOver = false; // To handle exiting the game
     private BufferedImage pauseImage;
 
+    // Music Control
+    private Clip backgroundMusic; // For the background music
+    private boolean isMusicPlaying = false;
+    private long musicPosition = 0; // Track the current position of the music
+
     public GamePanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
         this.setBackground(Color.BLACK);
@@ -59,15 +65,21 @@ public class GamePanel extends JPanel implements Runnable {
         tileManager = new TileManager(this);
         player = new Player(this, keyH, tileManager);
 
-    
         // Load map layers and tilesets
         tileManager.loadMap();
 
         try {
             introImage = ImageIO.read(getClass().getResourceAsStream("/assets/resources/Intro/Nigeru Sur.png"));
-            pauseImage = ImageIO.read(getClass().getResourceAsStream("/assets/resources/Intro/MENU.png")); 
-        } catch (IOException e) {
-            e.printStackTrace();  // Make sure to print out if there is an error loading images
+            pauseImage = ImageIO.read(getClass().getResourceAsStream("/assets/resources/Intro/MENU.png"));
+
+            // Load and play music in a loop
+            AudioInputStream audioStream = AudioSystem.getAudioInputStream(getClass().getResource("/assets/GameMusic/Music.wav"));
+            backgroundMusic = AudioSystem.getClip();
+            backgroundMusic.open(audioStream);
+            backgroundMusic.loop(Clip.LOOP_CONTINUOUSLY);
+            isMusicPlaying = true; // Initially music is playing
+        } catch (Exception e) {
+            e.printStackTrace();  // Make sure to print out if there is an error loading images or music
         }
     }
 
@@ -115,6 +127,7 @@ public class GamePanel extends JPanel implements Runnable {
             } else {
                 // If not paused, ESC will pause the game
                 isPaused = true;
+                stopMusic(); // Stop the music when the game is paused
             }
             keyH.pausePressed = false;  // Reset pause flag after processing
         }
@@ -122,6 +135,7 @@ public class GamePanel extends JPanel implements Runnable {
         // Handle resume on ENTER key
         if (keyH.enterPressedForResume && isPaused) {
             isPaused = false; // Resume game when Enter is pressed
+            startMusic(); // Start the music when the game is resumed
             keyH.enterPressedForResume = false; // Reset resume flag
         }
 
@@ -163,6 +177,22 @@ public class GamePanel extends JPanel implements Runnable {
     public void checkIntroSkip() {
         if (keyH.anyKeyPressed()) {
             isInIntro = false;  // Skip intro and start the game
+        }
+    }
+
+    // Method to stop music
+    public void stopMusic() {
+        if (backgroundMusic != null && backgroundMusic.isRunning()) {
+            musicPosition = backgroundMusic.getMicrosecondPosition(); // Track position before stopping
+            backgroundMusic.stop(); // Stop the music
+        }
+    }
+
+    // Method to start/resume music
+    public void startMusic() {
+        if (backgroundMusic != null && !backgroundMusic.isRunning()) {
+            backgroundMusic.setMicrosecondPosition(musicPosition); // Resume from the position where it stopped
+            backgroundMusic.loop(Clip.LOOP_CONTINUOUSLY); // Resume the music
         }
     }
 }
