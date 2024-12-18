@@ -19,8 +19,5 @@ public class Main {
         window.setVisible(true);
 
         gamePanel.startGameThread();
-
-        // Start Music
-        SoundHandler.playMusic("assets/GameMusic/Music.wav");
     }
 }

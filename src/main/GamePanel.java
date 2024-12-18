@@ -53,6 +53,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     // Music Control
     private Clip backgroundMusic;
+    private String musicPath = "src\\assets\\GameMusic\\Music.wav";
     private boolean isMusicPlaying = false;
     private long musicPosition = 0;
 
@@ -70,32 +71,27 @@ public class GamePanel extends JPanel implements Runnable {
         this.setDoubleBuffered(true);
         this.addKeyListener(keyH);
         this.setFocusable(true);
-
+    
         // Initialize instances in the correct order
         tileManager = new TileManager(this);
         collisionManager = new CollisionManager(tileManager);
         player = new Player(this, keyH, collisionManager, tileManager);
-
+    
         tileManager.loadMap();
-
+    
         // Load assets
         try {
             introImage = ImageIO.read(getClass().getResourceAsStream("/assets/resources/Intro/Nigeru Sur.png"));
             pauseImage = ImageIO.read(getClass().getResourceAsStream("/assets/resources/Intro/MENU.png"));
             comicImage = ImageIO.read(getClass().getResourceAsStream("/assets/resources/Intro/SlimeKomikcut.png"));
-
-            // Load and play background music
-            AudioInputStream audioStream = AudioSystem.getAudioInputStream(getClass().getResource("/assets/GameMusic/Music.wav"));
-            backgroundMusic = AudioSystem.getClip();
-            backgroundMusic.open(audioStream);
-            backgroundMusic.loop(Clip.LOOP_CONTINUOUSLY);
-            isMusicPlaying = true;
-
         } catch (Exception e) {
             e.printStackTrace();
         }
+    
+        // Start background music via SoundHandler
+        SoundHandler.playMusic(musicPath);
     }
-
+    
     public void startGameThread() {
         gameThread = new Thread(this);
         gameThread.start();
