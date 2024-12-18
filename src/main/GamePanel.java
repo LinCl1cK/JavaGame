@@ -15,17 +15,16 @@ public class GamePanel extends JPanel implements Runnable {
 
     // Screen Settings
     public final int originalTileSize = 16; // 16 x 16 Tile
-    final int scale = 3;
+    public final int scale = 3;
 
-    public final int tileSize = originalTileSize * scale; // 48 x 48 Tile
-    final int maxScreenCol = 12;
-    final int maxScreenRow = 9;
-    public final int screenWidth = tileSize * maxScreenCol; // 768 px
-    public final int screenHeight = tileSize * maxScreenRow; // 576 px
+    public final int maxScreenCol = 16;
+    public final int maxScreenRow = 12;
+    public final int screenWidth = originalTileSize * scale * maxScreenCol; // 768 px
+    public final int screenHeight = originalTileSize * scale * maxScreenRow; // 576 px
 
     // World Settings
-    public final int maxWorldCol = 32;
-    public final int maxWorldRow = 32;
+    public final int maxWorldCol = 66;
+    public final int maxWorldRow = 60;
 
     // Refresh rate
     int FPS = 60;
@@ -33,6 +32,7 @@ public class GamePanel extends JPanel implements Runnable {
     // Instances
     KeyHandler keyH = new KeyHandler();
     TileManager tileManager;
+    CollisionManager collisionManager;
     public Player player;
 
     Thread gameThread;
@@ -56,6 +56,14 @@ public class GamePanel extends JPanel implements Runnable {
     private boolean isMusicPlaying = false;
     private long musicPosition = 0;
 
+    public int getScreenWidth() {
+        return screenWidth;
+    }
+    
+    public int getScreenHeight() {
+        return screenHeight;
+    }    
+
     public GamePanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
         this.setBackground(Color.BLACK);
@@ -63,9 +71,10 @@ public class GamePanel extends JPanel implements Runnable {
         this.addKeyListener(keyH);
         this.setFocusable(true);
 
-        // Instances
+        // Initialize instances in the correct order
         tileManager = new TileManager(this);
-        player = new Player(this, keyH, tileManager);
+        collisionManager = new CollisionManager(tileManager);
+        player = new Player(this, keyH, collisionManager, tileManager);
 
         tileManager.loadMap();
 

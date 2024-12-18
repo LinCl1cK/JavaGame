@@ -10,18 +10,24 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import javax.imageio.ImageIO;
+
+import main.CollisionManager;
 import main.GamePanel;
 
 public class TileManager {
 
+    
     GamePanel gp;
     Player player;
+    CollisionManager collisionManager;
     private int[][] baseTileLayer;
     private int[][] playerTileLayer;
     private int[][] secondaryTileLayer;
     private int[][] miscTileLayer;
     private BufferedImage baseTilesetImage;
     private BufferedImage additionalTilesetImage;
+
+    public final int tileSize;
 
     public int[][] objectMap;
     public int[][] doorMap;
@@ -32,9 +38,18 @@ public class TileManager {
     public Tile[] tiles; 
     public int[][] collisionLayer;
 
+    public int getTileSize() {
+        return tileSize;
+    }    
+
+    public int[][]  getCollisionLayer() {
+        return collisionLayer;
+    }
+
     public TileManager(GamePanel gp) {
         this.gp = gp;
         tiles = new Tile[100]; // Adjust size based on the number of unique tiles
+        this.tileSize = gp.originalTileSize * gp.scale;
     }
 
     public void loadMap() {
@@ -122,9 +137,9 @@ public class TileManager {
                 int tileIndex = collisionLayer[row][col];
 
                 if (tiles[tileIndex].collision) {
-                    int tileX = col * gp.tileSize;
-                    int tileY = row * gp.tileSize;
-                    Rectangle tileArea = new Rectangle(tileX, tileY, gp.tileSize, gp.tileSize);
+                    int tileX = col * tileSize;
+                    int tileY = row * tileSize;
+                    Rectangle tileArea = new Rectangle(tileX, tileY, tileSize, tileSize);
 
                     if (playerArea.intersects(tileArea)) {
                         System.out.println("Collision detected at: (" + tileX + ", " + tileY + ")");
@@ -160,13 +175,13 @@ public class TileManager {
                     int tilesetX = (tileIndex % (tilesetImage.getWidth() / gp.originalTileSize)) * gp.originalTileSize;
                     int tilesetY = (tileIndex / (tilesetImage.getWidth() / gp.originalTileSize)) * gp.originalTileSize;
 
-                    int screenX = col * gp.tileSize - playerWorldX + gp.screenWidth / 2;
-                    int screenY = row * gp.tileSize - playerWorldY + gp.screenHeight / 2;
+                    int screenX = col * tileSize - playerWorldX + gp.screenWidth / 2;
+                    int screenY = row * tileSize - playerWorldY + gp.screenHeight / 2;
 
                     // Only draw tiles within the visible screen area
-                    if (screenX + gp.tileSize > 0 && screenX < gp.screenWidth &&
-                        screenY + gp.tileSize > 0 && screenY < gp.screenHeight) {
-                        g.drawImage(tilesetImage, screenX, screenY, screenX + gp.tileSize, screenY + gp.tileSize,
+                    if (screenX + tileSize > 0 && screenX < gp.screenWidth &&
+                        screenY + tileSize > 0 && screenY < gp.screenHeight) {
+                        g.drawImage(tilesetImage, screenX, screenY, screenX + tileSize, screenY + tileSize,
                                     tilesetX, tilesetY, tilesetX + gp.originalTileSize, tilesetY + gp.originalTileSize, gp);
                     }
                 }
@@ -197,13 +212,13 @@ public class TileManager {
                     int frameIndex = (int) ((currentTime / 500) % animations[tileIndex].length);  // Change '100' to control speed
                     BufferedImage sprite = animations[tileIndex][frameIndex];
     
-                    int screenX = col * gp.tileSize - playerWorldX + gp.screenWidth / 2;
-                    int screenY = row * gp.tileSize - playerWorldY + gp.screenHeight / 2;
+                    int screenX = col * tileSize - playerWorldX + gp.screenWidth / 2;
+                    int screenY = row * tileSize - playerWorldY + gp.screenHeight / 2;
     
                     // Only draw tiles within the visible screen area
-                    if (screenX + gp.tileSize > 0 && screenX < gp.screenWidth &&
-                        screenY + gp.tileSize > 0 && screenY < gp.screenHeight) {
-                        g2.drawImage(sprite, screenX, screenY, gp.tileSize, gp.tileSize, null);
+                    if (screenX + tileSize > 0 && screenX < gp.screenWidth &&
+                        screenY + tileSize > 0 && screenY < gp.screenHeight) {
+                        g2.drawImage(sprite, screenX, screenY, tileSize, tileSize, null);
                     }
                 }
             }
@@ -228,7 +243,9 @@ public class TileManager {
 
     // Testing method to check collision at specific coordinates
     public boolean checkCollisionAt(int x, int y) {
-        Rectangle testArea = new Rectangle(x, y, player.collisionArea.width, player.collisionArea.height);
+        int playerWidth = player.collisionBounds.width; // Use the player's collision bounds width
+        int playerHeight = player.collisionBounds.height; // Use the player's collision bounds height
+        Rectangle testArea = new Rectangle(x, y, playerWidth, playerHeight);
         boolean collision = isCollision(testArea);
         System.out.println("Collision at (" + x + ", " + y + "): " + collision);
         return collision;
