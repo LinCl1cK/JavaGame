@@ -89,7 +89,7 @@ public class Player extends Entity {
             worldY += deltaY;
             collisionBounds.setLocation(worldX + collisionAreaOffsetX, worldY + collisionAreaOffsetY);
         } else {
-            System.out.println("Collision at next position: (" + collisionBounds.x + ", " + collisionBounds.y + ")");
+            // System.out.println("Collision at next position: (" + collisionBounds.x + ", " + collisionBounds.y + ")");
         }
 
         elapsedTime += delta;
@@ -103,8 +103,5 @@ public class Player extends Entity {
         int tileSize = tileManager.getTileSize(); // Fetch tileSize from TileManager
         BufferedImage frame = animationManager.getFrame(isMoving, direction, frameIndex);
         g2.drawImage(frame, screenX, screenY, (tileSize * SCALE), (tileSize * SCALE), null);
-
-        // Optionally draw collision area for debugging
-        // g2.drawRect(screenX - collisionAreaOffsetX, screenY - collisionAreaOffsetY, collisionAreaWidth, collisionAreaHeight);
     }
 }

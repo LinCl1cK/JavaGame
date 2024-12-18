@@ -48,7 +48,7 @@ public class TileManager {
 
     public TileManager(GamePanel gp) {
         this.gp = gp;
-        tiles = new Tile[100]; // Adjust size based on the number of unique tiles
+        tiles = new Tile[50]; // Adjust size based on the number of unique tiles
         this.tileSize = gp.originalTileSize * gp.scale;
     }
 
@@ -72,7 +72,7 @@ public class TileManager {
             // Setup tiles with collision info
             setupTiles();
 
-            printCollisionData();
+            //printCollisionData();
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -226,20 +226,20 @@ public class TileManager {
     }
         
     // Testing method to print collision data
-    public void printCollisionData() {
-        System.out.println("Collision Layer Data:");
-        for (int row = 0; row < collisionLayer.length; row++) {
-            for (int col = 0; col < collisionLayer[row].length; col++) {
-                System.out.print(collisionLayer[row][col] + " ");
-            }
-            System.out.println();
-        }
+    // public void printCollisionData() {
+    //     System.out.println("Collision Layer Data:");
+    //     for (int row = 0; row < collisionLayer.length; row++) {
+    //         for (int col = 0; col < collisionLayer[row].length; col++) {
+    //             System.out.print(collisionLayer[row][col] + " ");
+    //         }
+    //         System.out.println();
+    //     }
 
-        System.out.println("\nTile Collision Properties:");
-        for (int i = 0; i < tiles.length; i++) {
-            System.out.println("Tile " + i + ": " + (tiles[i].collision ? "solid" : "walkable"));
-        }
-    }
+    //     System.out.println("\nTile Collision Properties:");
+    //     for (int i = 0; i < tiles.length; i++) {
+    //         System.out.println("Tile " + i + ": " + (tiles[i].collision ? "solid" : "walkable"));
+    //     }
+    // }
 
     // Testing method to check collision at specific coordinates
     public boolean checkCollisionAt(int x, int y) {

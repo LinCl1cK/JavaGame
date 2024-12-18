@@ -199,12 +199,13 @@ public class GamePanel extends JPanel implements Runnable {
             tileManager.drawMiscLayer(g2, player.worldX, player.worldY);
             tileManager.drawSecondaryLayer(g2, player.worldX, player.worldY);
 
+            //tileManager.drawObjectsAndDoors(g2, player.worldX, player.worldY);
+            tileManager.drawObjectAnimations(g2, player.worldX, player.worldY);
+
             // Draw player
             player.draw(g2);
 
-            // Draw objects and doors with animations
-            tileManager.drawObjectsAndDoors(g2, player.worldX, player.worldY);
-            //tileManager.drawDoorAnimations(g2, player.worldX, player.worldY);
+            tileManager.drawDoorAnimations(g2, player.worldX, player.worldY);
         }
 
         g2.dispose();
