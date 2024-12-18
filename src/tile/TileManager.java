@@ -30,6 +30,8 @@ public class TileManager {
 
     public int[][] objectMap;
     public int[][] doorMap;
+    private int[][] chestMap;
+    private int[][] keyMap;
     public BufferedImage[][] objectAnimations;
     public BufferedImage[][] doorAnimations;
 
@@ -64,8 +66,12 @@ public class TileManager {
             // Load maps and spritesheets
             objectMap = loadCSV("src/assets/dungeon/object/DungeonMap01_Objects.csv");
             doorMap = loadCSV("src/assets/dungeon/object/DungeonMap01_Doors.csv");
+            chestMap = loadCSV("src/assets/dungeon/object/DungeonMap01_Chests.csv");
+            keyMap = loadCSV("src/assets/dungeon/object/DungeonMap01_Keys.csv");
             objectAnimations = loadAnimatedSpriteSheet("src/assets/dungeon/object/Assets.png", 11, 4);
             doorAnimations = loadAnimatedSpriteSheet("src/assets/dungeon/object/door.png", 4, 2);
+
+            keyAnimations = loadAnimatedSpriteSheet("src/assets/dungeon/object/Assets.png", 11, 4);
 
             // Load collision layer
             collisionLayer = loadCSV("src/assets/dungeon/map/DungeonMap01_Collision.csv");
@@ -103,6 +109,13 @@ public class TileManager {
         return sheet.getSubimage((col - 1) * gp.originalTileSize, (row - 1) * gp.originalTileSize, gp.originalTileSize, gp.originalTileSize);
     }
 
+    public BufferedImage getKeys(int index) {
+        int tileSize = 16; // Assuming a 16x16 tile size
+        int x = (index % 8) * tileSize; // Assuming 8 sprites per row
+        int y = (index / 8) * tileSize;
+        return keyAnimations.getSubimage(x, y, tileSize, tileSize);
+    }
+
     public BufferedImage[][] loadAnimatedSpriteSheet(String filePath, int rows, int frames) throws IOException {
         BufferedImage sheet = ImageIO.read(new File(filePath));
         BufferedImage[][] sprites = new BufferedImage[rows][frames];
@@ -112,6 +125,27 @@ public class TileManager {
             }
         }
         return sprites;
+    }
+
+    private void drawAnimatedLayer(Graphics2D g2, int[][] map, BufferedImage[][] animations, int playerWorldX, int playerWorldY, long currentTime) {
+        for (int row = 0; row < map.length; row++) {
+            for (int col = 0; col < map[row].length; col++) {
+                int tileIndex = map[row][col];
+                if (tileIndex >= 0 && tileIndex < animations.length) {
+                    int frameIndex = (int) ((currentTime / 500) % animations[tileIndex].length);  // Change '100' to control speed
+                    BufferedImage sprite = animations[tileIndex][frameIndex];
+    
+                    int screenX = col * tileSize - playerWorldX + gp.screenWidth / 2;
+                    int screenY = row * tileSize - playerWorldY + gp.screenHeight / 2;
+    
+                    // Only draw tiles within the visible screen area
+                    if (screenX + tileSize > 0 && screenX < gp.screenWidth &&
+                        screenY + tileSize > 0 && screenY < gp.screenHeight) {
+                        g2.drawImage(sprite, screenX, screenY, tileSize, tileSize, null);
+                    }
+                }
+            }
+        }
     }
 
     private void setupTiles() {
@@ -190,10 +224,10 @@ public class TileManager {
         }
     }
 
-    public void drawObjectsAndDoors(Graphics2D g2, int playerWorldX, int playerWorldY) {
-        drawObjectAnimations(g2, playerWorldX, playerWorldY);
-        drawDoorAnimations(g2, playerWorldX, playerWorldY);
-    }
+    // public void drawObjectsAndDoors(Graphics2D g2, int playerWorldX, int playerWorldY) {
+    //     drawObjectAnimations(g2, playerWorldX, playerWorldY);
+    //     drawDoorAnimations(g2, playerWorldX, playerWorldY);
+    // }
 
     public void drawObjectAnimations(Graphics2D g2, int playerWorldX, int playerWorldY) {
         long currentTime = System.currentTimeMillis();
@@ -205,25 +239,14 @@ public class TileManager {
         drawAnimatedLayer(g2, doorMap, doorAnimations, playerWorldX, playerWorldY, currentTime);
     }
 
-    private void drawAnimatedLayer(Graphics2D g2, int[][] map, BufferedImage[][] animations, int playerWorldX, int playerWorldY, long currentTime) {
-        for (int row = 0; row < map.length; row++) {
-            for (int col = 0; col < map[row].length; col++) {
-                int tileIndex = map[row][col];
-                if (tileIndex >= 0 && tileIndex < animations.length) {
-                    int frameIndex = (int) ((currentTime / 500) % animations[tileIndex].length);  // Change '100' to control speed
-                    BufferedImage sprite = animations[tileIndex][frameIndex];
-    
-                    int screenX = col * tileSize - playerWorldX + gp.screenWidth / 2;
-                    int screenY = row * tileSize - playerWorldY + gp.screenHeight / 2;
-    
-                    // Only draw tiles within the visible screen area
-                    if (screenX + tileSize > 0 && screenX < gp.screenWidth &&
-                        screenY + tileSize > 0 && screenY < gp.screenHeight) {
-                        g2.drawImage(sprite, screenX, screenY, tileSize, tileSize, null);
-                    }
-                }
-            }
-        }
+    public void drawChestAnimations(Graphics2D g2, int playerWorldX, int playerWorldY) {
+        long currentTime = System.currentTimeMillis();
+        drawAnimatedLayer(g2, chestMap, objectAnimations, playerWorldX, playerWorldY, currentTime);
+    }
+
+    public void drawKeyAnimations(Graphics2D g2, int playerWorldX, int playerWorldY) {
+        long currentTime = System.currentTimeMillis();
+        drawAnimatedLayer(g2, keyMap, objectAnimations, playerWorldX, playerWorldY, currentTime);
     }
         
     // Testing method to print collision data
