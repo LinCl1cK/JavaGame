@@ -68,7 +68,7 @@ public class TileManager {
             doorMap = loadCSV("src/assets/dungeon/object/DungeonMap01_Doors.csv");
             chestMap = loadCSV("src/assets/dungeon/object/DungeonMap01_Chests.csv");
             keyMap = loadCSV("src/assets/dungeon/object/DungeonMap01_Keys.csv");
-            objectAnimations = loadAnimatedSpriteSheet("src/assets/dungeon/object/Assets.png", 11, 4);
+            objectAnimations = loadAnimatedSpriteSheet("src/assets/dungeon/object/Assets.png", 12, 4);
             doorAnimations = loadAnimatedSpriteSheet("src/assets/dungeon/object/door.png", 4, 2);
 
             // Load collision layer
