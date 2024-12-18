@@ -14,6 +14,12 @@ public class Player extends Entity {
     private final CollisionManager collisionManager;
     AnimationManager animationManager;
 
+    //private List<Key> inventory = new ArrayList<>();
+    //private List<Key> consumedKeys = new ArrayList<>();
+    private int goldKeyCount = 0;
+    private int silverKeyCount = 0;
+
+
     private final int screenX, screenY;
     private final int SCALE = 3; // Change this value to adjust the size
     private boolean isMoving = false;
@@ -36,6 +42,7 @@ public class Player extends Entity {
         this.collisionManager = collisionManager;
         this.tileManager = tileManager;
         animationManager = new AnimationManager(character);
+        
 
         // Initialize the collision bounds
         int tileSize = tileManager.getTileSize();
@@ -99,9 +106,31 @@ public class Player extends Entity {
         }
     }
 
+
+
     public void draw(Graphics2D g2) {
         int tileSize = tileManager.getTileSize(); // Fetch tileSize from TileManager
         BufferedImage frame = animationManager.getFrame(isMoving, direction, frameIndex);
         g2.drawImage(frame, screenX, screenY, (tileSize * SCALE), (tileSize * SCALE), null);
     }
+
+    
+    public int getGoldKeyCount() {
+        return goldKeyCount;
+    }
+
+    public int getSilverKeyCount() {
+        return silverKeyCount;
+    }
+
+    // Method to consume keys
+    public void collectKey(int keyIndex) {
+        if (keyIndex == 7) {
+            goldKeyCount++;  // Collect a Gold key
+        } else if (keyIndex == 8) {
+            silverKeyCount++;  // Collect a Silver key
+        }
+    }
+
+
 }
