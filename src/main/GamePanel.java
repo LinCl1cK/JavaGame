@@ -174,6 +174,8 @@ public class GamePanel extends JPanel implements Runnable {
 
         if (!isInIntro && !isPaused) {
             player.update(delta);
+            tileManager.updateKeyCollection(player);  // Check for key collection
+
         }
     }
 
@@ -209,7 +211,12 @@ public class GamePanel extends JPanel implements Runnable {
             player.draw(g2);
 
             tileManager.drawDoorAnimations(g2, player.worldX, player.worldY);
-        }
+
+            // Display collected keys
+            g2.setColor(Color.WHITE);
+            g2.drawString("Gold Keys: " + player.getGoldKeyCount(), 10, 30);
+            g2.drawString("Silver Keys: " + player.getSilverKeyCount(), 10, 50);
+            }
 
         g2.dispose();
     }

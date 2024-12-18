@@ -71,8 +71,6 @@ public class TileManager {
             objectAnimations = loadAnimatedSpriteSheet("src/assets/dungeon/object/Assets.png", 11, 4);
             doorAnimations = loadAnimatedSpriteSheet("src/assets/dungeon/object/door.png", 4, 2);
 
-            keyAnimations = loadAnimatedSpriteSheet("src/assets/dungeon/object/Assets.png", 11, 4);
-
             // Load collision layer
             collisionLayer = loadCSV("src/assets/dungeon/map/DungeonMap01_Collision.csv");
 
@@ -109,12 +107,6 @@ public class TileManager {
         return sheet.getSubimage((col - 1) * gp.originalTileSize, (row - 1) * gp.originalTileSize, gp.originalTileSize, gp.originalTileSize);
     }
 
-    public BufferedImage getKeys(int index) {
-        int tileSize = 16; // Assuming a 16x16 tile size
-        int x = (index % 8) * tileSize; // Assuming 8 sprites per row
-        int y = (index / 8) * tileSize;
-        return keyAnimations.getSubimage(x, y, tileSize, tileSize);
-    }
 
     public BufferedImage[][] loadAnimatedSpriteSheet(String filePath, int rows, int frames) throws IOException {
         BufferedImage sheet = ImageIO.read(new File(filePath));
@@ -248,6 +240,34 @@ public class TileManager {
         long currentTime = System.currentTimeMillis();
         drawAnimatedLayer(g2, keyMap, objectAnimations, playerWorldX, playerWorldY, currentTime);
     }
+    public void updateKeyCollection(Player player) {
+        // Iterate through the keyMap to find key tiles
+        for (int row = 0; row < keyMap.length; row++) {
+            for (int col = 0; col < keyMap[row].length; col++) {
+                int keyIndex = keyMap[row][col];
+    
+                // Check if the player is near a key and is not already collected (key value should not be zero)
+                if (keyIndex == 7 || keyIndex == 8) {
+                    // Calculate the tile position
+                    int keyTileX = col * tileSize;
+                    int keyTileY = row * tileSize;
+    
+                    Rectangle keyBounds = new Rectangle(keyTileX, keyTileY, tileSize, tileSize);
+    
+                    // Check if the player intersects with the key tile
+                    if (player.collisionBounds.intersects(keyBounds)) {
+                        // Collect the key based on its index (7 for Gold, 8 for Silver)
+                        player.collectKey(keyIndex);
+    
+                        // Remove the key from the keyMap (set it to 0, indicating the key is collected)
+                        keyMap[row][col] = 11;
+                        System.out.println("Key collected! Gold: " + player.getGoldKeyCount() + " Silver: " + player.getSilverKeyCount());
+                    }
+                }
+            }
+        }
+    }
+    
         
     // Testing method to print collision data
     // public void printCollisionData() {
@@ -274,4 +294,7 @@ public class TileManager {
         System.out.println("Collision at (" + x + ", " + y + "): " + collision);
         return collision;
     }
+
+
+    
 }
