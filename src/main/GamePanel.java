@@ -152,7 +152,7 @@ public class GamePanel extends JPanel implements Runnable {
             if (isPaused) {
                 System.out.println("Game exited.");
                 System.exit(0); // Quit game on second ESC
-               
+
             } else {
                 // If not paused, ESC will pause the game
                 isPaused = true; //pause the game
@@ -172,8 +172,8 @@ public class GamePanel extends JPanel implements Runnable {
             keyH.enterPressedForResume = false; // Reset resume flag
         }
 
-        if (!isInIntro && !isPaused) { 
-            player.update(delta); 
+        if (!isInIntro && !isPaused) {
+            player.update(delta);
         }
     }
 
@@ -202,7 +202,10 @@ public class GamePanel extends JPanel implements Runnable {
             //tileManager.drawObjectsAndDoors(g2, player.worldX, player.worldY);
             tileManager.drawObjectAnimations(g2, player.worldX, player.worldY);
 
-            // Draw player
+            tileManager.drawChestAnimations(g2, player.worldX, player.worldY);
+
+            tileManager.drawKeyAnimations(g2, player.worldX, player.worldY);
+
             player.draw(g2);
 
             tileManager.drawDoorAnimations(g2, player.worldX, player.worldY);
