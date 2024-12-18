@@ -84,13 +84,7 @@ public class KeyHandler implements KeyListener {
             rightPressed = false;
         }
 
-        // Reset pause and resume flags
-        if (code == KeyEvent.VK_ESCAPE) {
-            pausePressed = false; // Reset pause flag after it's processed
-        }
-        if (code == KeyEvent.VK_ENTER) {
-            enterPressedForResume = false; // Reset resume flag after it's processed
-        }
+        
     }
 
     // Check if any key is pressed to skip intro
@@ -105,10 +99,10 @@ public class KeyHandler implements KeyListener {
         downPressed = false;
         leftPressed = false;
         rightPressed = false;
-        enterPressedForResume = false;
+        //enterPressedForResume = false;
         spacePressed = false;
         shiftPressed = false;
-        pausePressed = false;
+        //pausePressed = false;
     }
     
 }
