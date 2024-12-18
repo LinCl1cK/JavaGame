@@ -1,5 +1,6 @@
 package tile;
 
+import entity.Chest;
 import entity.Player;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -9,6 +10,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.imageio.ImageIO;
 
 import main.CollisionManager;
@@ -52,6 +56,8 @@ public class TileManager {
         this.tileSize = gp.originalTileSize * gp.scale;
     }
 
+    private List<Chest> chests = new ArrayList<>();
+
     public void loadMap() {
         try {
             // Loading map
@@ -61,10 +67,10 @@ public class TileManager {
             secondaryTileLayer = loadCSV("src/assets/dungeon/map/DungeonMap01_structures.csv");
 
             // Load maps and spritesheets
-            objectMap = loadCSV("src/assets/dungeon/map/DungeonMap01_Objects.csv");
-            doorMap = loadCSV("src/assets/dungeon/map/DungeonMap01_Doors.csv");
-            objectAnimations = loadAnimatedSpriteSheet("src/assets/dungeon/map/Assets.png", 11, 4);
-            doorAnimations = loadAnimatedSpriteSheet("src/assets/dungeon/map/door.png", 4, 2);
+            objectMap = loadCSV("src/assets/dungeon/object/DungeonMap01_Objects.csv");
+            doorMap = loadCSV("src/assets/dungeon/object/DungeonMap01_Doors.csv");
+            objectAnimations = loadAnimatedSpriteSheet("src/assets/dungeon/object/Assets.png", 11, 4);
+            doorAnimations = loadAnimatedSpriteSheet("src/assets/dungeon/object/door.png", 4, 2);
 
             // Load collision layer
             collisionLayer = loadCSV("src/assets/dungeon/map/DungeonMap01_Collision.csv");
