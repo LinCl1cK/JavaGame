@@ -1,6 +1,5 @@
 package tile;
 
-import entity.Chest;
 import entity.Player;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -10,11 +9,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.imageio.ImageIO;
-
 import main.CollisionManager;
 import main.GamePanel;
 
@@ -56,7 +51,7 @@ public class TileManager {
         this.tileSize = gp.originalTileSize * gp.scale;
     }
 
-    private List<Chest> chests = new ArrayList<>();
+    //private List<Chest> chests = new ArrayList<>();
 
     public void loadMap() {
         try {
