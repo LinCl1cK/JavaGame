@@ -73,7 +73,7 @@ public class GamePanel extends JPanel implements Runnable {
         this.setFocusable(true);
     
         // Initialize instances in the correct order
-        tileManager = new TileManager(this);
+        tileManager = new TileManager(this, player);
         collisionManager = new CollisionManager(tileManager);
         player = new Player(this, keyH, collisionManager, tileManager);
     
@@ -175,7 +175,8 @@ public class GamePanel extends JPanel implements Runnable {
         if (!isInIntro && !isPaused) {
             player.update(delta);
             tileManager.updateKeyCollection(player);  // Check for key collection
-
+            tileManager.update(player);
+            
         }
     }
 
@@ -204,7 +205,8 @@ public class GamePanel extends JPanel implements Runnable {
             //tileManager.drawObjectsAndDoors(g2, player.worldX, player.worldY);
             tileManager.drawObjectAnimations(g2, player.worldX, player.worldY);
 
-            tileManager.drawChestAnimations(g2, player.worldX, player.worldY);
+            //tileManager.drawChestAnimations(g2, player.worldX, player.worldY);
+            tileManager.drawChests(g2, player.worldX, player.worldY);
 
             tileManager.drawKeyAnimations(g2, player.worldX, player.worldY);
 

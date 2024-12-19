@@ -7,7 +7,7 @@ public class KeyHandler implements KeyListener {
 
     // Movement keys
     public boolean upPressed, downPressed, leftPressed, rightPressed, 
-                enterPressed, spacePressed, shiftPressed; 
+                enterPressed, spacePressed, shiftPressed, fKeyPressed; 
 
     // Pause and exit keys
     public boolean pausePressed, enterPressedForResume; 
@@ -52,6 +52,9 @@ public class KeyHandler implements KeyListener {
         if (code == KeyEvent.VK_ENTER) {
             enterPressedForResume = true; // Trigger resume when Enter is pressed
         }
+        if (code == KeyEvent.VK_F) {
+            fKeyPressed = true; // Set to true when F is pressed
+        }
     }
 
     @Override
@@ -83,8 +86,9 @@ public class KeyHandler implements KeyListener {
         if(code == KeyEvent.VK_RIGHT) {
             rightPressed = false;
         }
-
-        
+        if (code == KeyEvent.VK_F) {
+            fKeyPressed = false; // Reset F key when released
+        }
     }
 
     // Check if any key is pressed to skip intro

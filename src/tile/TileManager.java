@@ -1,6 +1,9 @@
 package tile;
 
+import entity.Chest;
 import entity.Player;
+import java.awt.Color;
+
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -9,6 +12,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.List;
+import java.util.ArrayList;
+
 import javax.imageio.ImageIO;
 import main.CollisionManager;
 import main.GamePanel;
@@ -35,6 +41,8 @@ public class TileManager {
     public BufferedImage[][] objectAnimations;
     public BufferedImage[][] doorAnimations;
 
+    public List<Chest> chests;
+
     // Collision variables
     public Tile[] tiles; 
     public int[][] collisionLayer;
@@ -47,13 +55,12 @@ public class TileManager {
         return collisionLayer;
     }
 
-    public TileManager(GamePanel gp) {
+    public TileManager(GamePanel gp, Player player) {
         this.gp = gp;
+        this.player = player;  // Assign the player object
         tiles = new Tile[50]; // Adjust size based on the number of unique tiles
         this.tileSize = gp.originalTileSize * gp.scale;
     }
-
-    //private List<Chest> chests = new ArrayList<>();
 
     public void loadMap() {
         try {
@@ -70,6 +77,18 @@ public class TileManager {
             keyMap = loadCSV("src/assets/dungeon/object/DungeonMap01_Keys.csv");
             objectAnimations = loadAnimatedSpriteSheet("src/assets/dungeon/object/Assets.png", 12, 4);
             doorAnimations = loadAnimatedSpriteSheet("src/assets/dungeon/object/door.png", 4, 2);
+
+            chests = new ArrayList<>();
+
+            // Set up chests manually or based on data (e.g., using coordinates)
+            chests.add(new Chest(24 * tileSize, 38 * tileSize, this, 0)); // Add chest to ArrayList
+            chests.add(new Chest(11 * tileSize, 29 * tileSize, this, 0));
+            chests.add(new Chest(53 * tileSize, 27 * tileSize, this, 0));
+            chests.add(new Chest(13 * tileSize, 12 * tileSize, this, 0));
+            chests.add(new Chest(54 * tileSize, 11 * tileSize, this, 0));
+            chests.add(new Chest(53 * tileSize, 11 * tileSize, this, 0));
+            chests.add(new Chest(54 * tileSize, 10 * tileSize, this, 0));
+            chests.add(new Chest(53 * tileSize, 10 * tileSize, this, 0));
 
             // Load collision layer
             collisionLayer = loadCSV("src/assets/dungeon/map/DungeonMap01_Collision.csv");
@@ -246,7 +265,6 @@ public class TileManager {
             for (int col = 0; col < keyMap[row].length; col++) {
                 int keyIndex = keyMap[row][col];
     
-                // Check if the player is near a key and is not already collected (key value should not be zero)
                 if (keyIndex == 7 || keyIndex == 8) {
                     // Calculate the tile position
                     int keyTileX = col * tileSize;
@@ -267,23 +285,42 @@ public class TileManager {
             }
         }
     }
-    
-        
-    // Testing method to print collision data
-    // public void printCollisionData() {
-    //     System.out.println("Collision Layer Data:");
-    //     for (int row = 0; row < collisionLayer.length; row++) {
-    //         for (int col = 0; col < collisionLayer[row].length; col++) {
-    //             System.out.print(collisionLayer[row][col] + " ");
-    //         }
-    //         System.out.println();
-    //     }
 
-    //     System.out.println("\nTile Collision Properties:");
-    //     for (int i = 0; i < tiles.length; i++) {
-    //         System.out.println("Tile " + i + ": " + (tiles[i].collision ? "solid" : "walkable"));
-    //     }
-    // }
+    public void update(Player player) {
+        for (Chest chest : chests) {
+            chest.update();
+        }
+    }    
+
+    // Add chests to the TileManager
+    public void addChest(Chest chest) {
+        chests.add(chest);
+    }
+
+    // Retrieve all chests
+    public List<Chest> getChests() {
+        return chests;
+    }
+    
+    public void drawChests(Graphics2D g2, int playerWorldX, int playerWorldY) {
+        for (Chest chest : chests) {
+            if (chest != null) {
+                BufferedImage sprite = chest.getCurrentFrame();
+    
+                int screenX = chest.getX() - playerWorldX + gp.screenWidth / 2;
+                int screenY = chest.getY() - playerWorldY + gp.screenHeight / 2;
+    
+                g2.drawImage(sprite, screenX, screenY, tileSize, tileSize, null);
+    
+                // Debug: Draw chest boundary as a rectangle
+                g2.setColor(new Color(255, 0, 0, 100)); // Red rectangle with transparency
+                g2.fillRect(screenX, screenY, tileSize, tileSize);
+    
+                g2.setColor(Color.RED); // Solid red for border
+                g2.drawRect(screenX, screenY, tileSize, tileSize);
+            }
+        }
+    }    
 
     // Testing method to check collision at specific coordinates
     public boolean checkCollisionAt(int x, int y) {
@@ -294,7 +331,4 @@ public class TileManager {
         System.out.println("Collision at (" + x + ", " + y + "): " + collision);
         return collision;
     }
-
-
-    
 }
