@@ -12,7 +12,8 @@ public class Player extends Entity {
     private final KeyHandler keyH;
     private final TileManager tileManager;
     private final CollisionManager collisionManager;
-    AnimationManager animationManager;
+    private final CharacterAnimationManager animationManager;
+    private final ObjectAnimationManager objectAnimationManager;
 
     //private List<Key> inventory = new ArrayList<>();
     //private List<Key> consumedKeys = new ArrayList<>();
@@ -37,25 +38,24 @@ public class Player extends Entity {
     private int collisionAreaWidth; 
     private int collisionAreaHeight;
 
-    public Player(GamePanel gp, KeyHandler keyH, CollisionManager collisionManager, TileManager tileManager) {
+    public Player(GamePanel gp, KeyHandler keyH, CollisionManager collisionManager, TileManager tileManager, ObjectAnimationManager objectAnimationManager) {
         this.keyH = keyH;
         this.collisionManager = collisionManager;
         this.tileManager = tileManager;
-        animationManager = new AnimationManager(character);
-        
-
-        // Initialize the collision bounds
+        this.objectAnimationManager = objectAnimationManager; // Assign ObjectAnimationManager
+        animationManager = new CharacterAnimationManager(character);
+    
         int tileSize = tileManager.getTileSize();
         this.collisionAreaWidth = tileSize - 5;
         this.collisionAreaHeight = tileSize - 5;
         this.collisionBounds = new Rectangle(worldX + collisionAreaOffsetX, worldY + collisionAreaOffsetY, collisionAreaWidth, collisionAreaHeight);
-
-        // Use GamePanel getters for screen dimensions
+    
         this.screenX = gp.getScreenWidth() / 2 - (tileSize * SCALE) / 2;
         this.screenY = gp.getScreenHeight() / 2 - (tileSize * SCALE) / 2;
-
+    
         setDefaultValues();
     }
+    
 
     public void setDefaultValues() {
         worldX = tileManager.getTileSize() * 47;
@@ -103,7 +103,7 @@ public class Player extends Entity {
         }
     
         // Check for key collection
-        tileManager.updateKeyCollection(this);
+        objectAnimationManager.updateKeyCollection(this);
     
         elapsedTime += delta;
         if (elapsedTime >= animationSpeed) {
@@ -126,23 +126,7 @@ public class Player extends Entity {
     //     }
     // }
     public void interactWithChest() {
-        for (Chest chest : tileManager.getChests()) {  // Get all chests from TileManager
-            if (chest != null && isPlayerNearChest(chest) && !chest.isOpened()) {  // Check if player is near and chest isn't opened
-                if (getSilverKeyCount() > 0) {  // Check if the player has a silver key
-                    chest.isOpen();  // Open the chest
-                    consumeSilverKey();  // Consume one silver key
-                    System.out.println("Chest opened and a silver key was consumed!");
-                } else {
-                    System.out.println("Player needs a silver key to open this chest.");
-                }
-                break;  // Stop after opening one chest
-            }
-        }
-    }
-
-    private boolean isPlayerNearChest(Chest chest) {
-        Rectangle chestBounds = new Rectangle(chest.getX(), chest.getY(), tileManager.getTileSize(), tileManager.getTileSize());
-        return collisionBounds.intersects(chestBounds);  // Check if the player's collision bounds intersect with chest
+        objectAnimationManager.interactWithChest(this);
     }
     
     public void draw(Graphics2D g2) {

@@ -1,29 +1,24 @@
 package entity;
 
-import tile.TileManager;
 import java.awt.image.BufferedImage;
 
 public class Chest {
     private int x, y; // Chest's position
-    private TileManager tileManager; // Reference to TileManager
-    private int chestIndex; // Sprite row for this chest
-    private boolean isOpen; // Chest state
     private boolean isOpened = false; 
     private int animationFrame; // Current animation frame
     private int frameCounter; // Tracks time spent on a frame
     private final int maxFrames; // Total frames for the animation
     private final int frameDuration; // Frames to display each animation frame
+    private BufferedImage[][] chestAnimations; // Store animations independently
 
-    public Chest(int x, int y, TileManager tileManager, int chestIndex) {
+    public Chest(int x, int y, BufferedImage[][] chestAnimations) {
         this.x = x;
         this.y = y;
-        this.tileManager = tileManager;
-        this.chestIndex = chestIndex;
-        this.isOpen = false;
+        this.chestAnimations = chestAnimations;
         this.animationFrame = 0;
         this.frameCounter = 0;
-        this.maxFrames = tileManager.objectAnimations[chestIndex].length; // Get the total frames
-        this.frameDuration = 10; // Duration for each frame (adjust as needed)
+        this.maxFrames = chestAnimations[0].length; // Ensure maxFrames matches the number of frames per row
+        this.frameDuration = 10; // Adjust as needed
     }
 
     public int getX() {
@@ -34,39 +29,41 @@ public class Chest {
         return y;
     }
 
-    public int getChestIndex() {
-        return chestIndex;
-    }
-
     public boolean isOpened() {
         return isOpened;
     }
 
-    public void isOpen() {
+    public void open() {
         if (!isOpened) {
             isOpened = true;
-            animationFrame = 0; // Reset animation frame
-            frameCounter = 0; // Reset frame counter
+            animationFrame = 0;
+            frameCounter = 0;
         }
     }
 
     public void update() {
-        if (isOpen && animationFrame < maxFrames) {
-            frameCounter++;
-            if (frameCounter >= frameDuration) {
-                frameCounter = 0; // Reset frame counter
-                animationFrame++; // Move to the next frame
-            }
+        frameCounter++;
 
-            // Ensure chest remains on the last frame when animation completes
-            if (animationFrame >= maxFrames) {
-                animationFrame = maxFrames - 1; // Keep it at the last frame
+        if (frameCounter >= frameDuration) {
+            frameCounter = 0;
+            animationFrame++;
+
+            // **If closed, cycle through the first row (closed animation)**
+            if (!isOpened) {
+                if (animationFrame >= chestAnimations[0].length) {
+                    animationFrame = 0; // Loop closed animation frames
+                }
+            } 
+            // **If opened, cycle through the second row (opening animation)**
+            else {
+                if (animationFrame >= chestAnimations[1].length) {
+                    animationFrame = chestAnimations[1].length - 1; // Stay on last frame when fully opened
+                }
             }
         }
     }
 
     public BufferedImage getCurrentFrame() {
-        // Return the current frame for rendering
-        return tileManager.objectAnimations[chestIndex][animationFrame];
+        return isOpened ? chestAnimations[1][animationFrame] : chestAnimations[0][animationFrame];
     }
 }

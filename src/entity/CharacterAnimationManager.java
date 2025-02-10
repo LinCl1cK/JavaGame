@@ -5,7 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 
-public class AnimationManager {
+public class CharacterAnimationManager {
     private static final int SPRITE_WIDTH = 64, SPRITE_HEIGHT = 64;
     private static final int RUNNING_FRAMES = 8;
     private static final int IDLE_FRAMES = 6;
@@ -14,7 +14,7 @@ public class AnimationManager {
     private BufferedImage[] downFrames, upFrames, leftFrames, rightFrames;
     private BufferedImage[] downIdleFrames, upIdleFrames, leftIdleFrames, rightIdleFrames;
 
-    public AnimationManager(String character) {
+    public CharacterAnimationManager(String character) {
         loadSpriteSheets(character);
         loadFrames();
         loadIdleFrames();
